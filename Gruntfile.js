@@ -409,6 +409,30 @@ module.exports = function (grunt) {
       test: {
         NODE_ENV: 'test'
       }
+    },
+
+    yuidoc: {
+      compile: {
+        name: 'Grunt Test',
+        description: 'Grunt Test Description',
+        version: '1.2.1',
+        url: 'http://test.com/',
+        options: {
+          paths: ['<%= yeoman.app %>', 'lib'],
+          outdir: 'doc'
+        }
+      },
+      parseOnly: {
+        name: 'Grunt Test',
+        description: 'Grunt Test Description',
+        version: '1.2.1',
+        url: 'http://test.com/',
+        options: {
+          parseOnly: true,
+          paths: ['<%= yeoman.app %>', 'lib'],
+          outdir: 'doc'
+        }
+      }
     }
   });
 

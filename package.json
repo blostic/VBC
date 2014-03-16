@@ -57,7 +57,9 @@
     "grunt-env": "~0.4.1",
     "grunt-node-inspector": "~0.1.3",
     "grunt-nodemon": "~0.2.0",
-    "open": "~0.0.4"
+    "open": "~0.0.4",
+    "yuidocjs": "~0.3.49",
+    "grunt-contrib-yuidoc":"~0.5.2"
   },
   "engines": {
     "node": ">=0.10.0"
