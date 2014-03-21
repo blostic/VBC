@@ -59,7 +59,7 @@ module.exports = function (grunt) {
         tasks: ['mochaTest']
       },
       jsTest: {
-        files: ['test/client/spec/{,*/}*.js'],
+        files: ['test/client/unit/{,*/}*.js'],
         tasks: ['newer:jshint:test', 'karma']
       },
       styles: {
@@ -112,7 +112,7 @@ module.exports = function (grunt) {
         options: {
           jshintrc: 'test/client/.jshintrc'
         },
-        src: ['test/client/spec/{,*/}*.js']
+        src: ['test/client/unit/{,*/}*.js']
       }
     },
 
@@ -307,7 +307,9 @@ module.exports = function (grunt) {
             '.htaccess',
             'bower_components/**/*',
             'images/{,*/}*.{webp}',
-            'fonts/**/*'
+            'fonts/**/*',
+            'scripts/{,*/}*.js',
+            'styles/{,*/}*.{css, styl}'
           ]
         }, {
           expand: true,
@@ -335,7 +337,13 @@ module.exports = function (grunt) {
         cwd: '<%= yeoman.app %>/styles',
         dest: '.tmp/styles/',
         src: '{,*/}*.css'
-      }
+      },
+      images: {
+        expand: true,
+        cwd: '<%= yeoman.app %>/images',
+        dest: '.tmp/images/',
+        src: '{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+    }
     },
 
     // Run some tasks in parallel to speed up the build process
@@ -357,6 +365,7 @@ module.exports = function (grunt) {
       },
       dist: [
         'copy:styles',
+        'copy:images',
         'imagemin',
         'svgmin',
         'htmlmin'
@@ -366,25 +375,25 @@ module.exports = function (grunt) {
     // By default, your `index.html`'s <!-- Usemin block --> will take care of
     // minification. These next options are pre-configured if you do not wish
     // to use the Usemin blocks.
-    // cssmin: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/styles/main.css': [
-    //         '.tmp/styles/{,*/}*.css',
-    //         '<%= yeoman.app %>/styles/{,*/}*.css'
-    //       ]
-    //     }
-    //   }
-    // },
-    // uglify: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/scripts/scripts.js': [
-    //         '<%= yeoman.dist %>/scripts/scripts.js'
-    //       ]
-    //     }
-    //   }
-    // },
+    cssmin: {
+       dist: {
+         files: {
+           '<%= yeoman.dist %>/styles/main.css': [
+             '.tmp/styles/{,*/}*.css',
+             '<%= yeoman.app %>/styles/{,*/}*.css'
+           ]
+         }
+       }
+    },
+    uglify: {
+       dist: {
+         files: {
+           '<%= yeoman.dist %>/scripts/scripts.js': [
+             '<%= yeoman.dist %>/scripts/scripts.js'
+           ]
+         }
+       }
+    },
     // concat: {
     //   dist: {}
     // },
@@ -394,6 +403,10 @@ module.exports = function (grunt) {
       unit: {
         configFile: 'karma.conf.js',
         singleRun: true
+      },
+      e2e: {
+          configFile: 'karma-e2e.conf.js',
+          singleRun: true
       }
     },
 
@@ -412,27 +425,46 @@ module.exports = function (grunt) {
 
     yuidoc: {
       compile: {
-        name: 'Grunt Test',
-        description: 'Grunt Test Description',
-        version: '1.2.1',
-        url: 'http://test.com/',
+        name: 'Volunteer Computing',
+        description: 'Volunteer Computing Project',
+        version: '0.0.0',
+        url: 'http://',
         options: {
           paths: ['<%= yeoman.app %>', 'lib'],
-          outdir: 'doc'
+          outdir: 'doc',
+          marked: true
         }
       },
       parseOnly: {
-        name: 'Grunt Test',
-        description: 'Grunt Test Description',
-        version: '1.2.1',
-        url: 'http://test.com/',
+        name: 'Volunteer Computing',
+        description: 'Volunteer Computing Project',
+        version: '0.0.0',
+        url: 'http://',
         options: {
           parseOnly: true,
           paths: ['<%= yeoman.app %>', 'lib'],
           outdir: 'doc'
         }
       }
+    },
+
+    jsbeautifier : {
+        verify: {
+            files: {
+                src: ["*"]
+            },
+            options: {
+                mode: "VERIFY_ONLY"
+            }
+        },
+        format: {
+            files: {
+                src: ["*"]
+            }
+        }
     }
+
+
   });
 
   // Used for delaying livereload until after server has restarted
@@ -512,17 +544,15 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean:dist',
     'bower-install',
-    'useminPrepare',
-    'concurrent:dist',
-    'autoprefixer',
-    'concat',
-    'ngmin',
-    'copy:dist',
-    'cdnify',
-    'cssmin',
-    'uglify',
-    'rev',
-    'usemin'
+//    'useminPrepare',
+//    'concurrent:dist',
+//    'autoprefixer',
+//    'copy:dist',
+//    'ngmin',
+//    'cdnify',
+//    'cssmin',
+//    'uglify',
+//    'usemin'
   ]);
 
   grunt.registerTask('heroku', function () {

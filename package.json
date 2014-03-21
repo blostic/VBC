@@ -59,7 +59,13 @@
     "grunt-nodemon": "~0.2.0",
     "open": "~0.0.4",
     "yuidocjs": "~0.3.49",
-    "grunt-contrib-yuidoc":"~0.5.2"
+    "grunt-contrib-yuidoc": "~0.5.2",
+    "marked": "~0.3.2",
+    "grunt-jsbeautifier": "~0.2.6",
+    "grunt-contrib-stylus": "~0.13.2",
+    "stylus": "~0.42.3",
+    "nib": ""
+
   },
   "engines": {
     "node": ">=0.10.0"
