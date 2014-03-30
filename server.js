@@ -32,7 +32,7 @@ require('./lib/config/dummydata');
 // Passport Configuration
 var passport = require('./lib/config/passport');
 
-var app = express();
+var app = module.exports = express();
 
 // Express settings
 require('./lib/config/express')(app);
