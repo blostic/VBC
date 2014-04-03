@@ -2,7 +2,6 @@
   "node": true,
   "browser": true,
   "esnext": true,
-  "bitwise": true,
   "camelcase": true,
   "curly": true,
   "eqeqeq": true,
@@ -11,7 +10,7 @@
   "latedef": true,
   "newcap": true,
   "noarg": true,
-  "quotmark": "single",
+  "quotmark": "single double",
   "regexp": true,
   "undef": true,
   "unused": true,
@@ -19,6 +18,7 @@
   "trailing": true,
   "smarttabs": true,
   "globals": {
-    "angular": false
+    "angular": false,
+    "routingConfig": false
   }
 }

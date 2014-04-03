@@ -10,11 +10,11 @@ angular.module('vcApp')
                     password: $scope.password,
                     rememberme: $scope.rememberme
                 },
-                function(res) {
+                function(/*res*/) {
                     $location.path('/');
                 },
                 function(err) {
-                    $rootScope.error = "Failed to login";
+                    $rootScope.error = 'Failed to login' + err;
                 });
         };
 

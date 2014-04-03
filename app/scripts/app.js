@@ -13,7 +13,7 @@ angular.module('vcApp', [
         $stateProvider
             .state('public', {
                 abstract: true,
-                template: "<ui-view/>",
+                template: '<ui-view/>',
                 data: {
                     access: access.public
                 }
@@ -27,7 +27,7 @@ angular.module('vcApp', [
         $stateProvider
             .state('anon', {
                 abstract: true,
-                template: "<ui-view/>",
+                template: '<ui-view/>',
                 data: {
                     access: access.anon
                 }
@@ -47,7 +47,7 @@ angular.module('vcApp', [
         $stateProvider
             .state('user', {
                 abstract: true,
-                template: "<ui-view/>",
+                template: '<ui-view/>',
                 data: {
                     access: access.user
                 }
@@ -70,7 +70,7 @@ angular.module('vcApp', [
         $stateProvider
             .state('admin', {
                 abstract: true,
-                template: "<ui-view/>",
+                template: '<ui-view/>',
                 data: {
                     access: access.admin
                 }
@@ -86,12 +86,11 @@ angular.module('vcApp', [
 
         // FIX for trailing slashes. Gracefully "borrowed" from https://github.com/angular-ui/ui-router/issues/50
         $urlRouterProvider.rule(function($injector, $location) {
-            if ($location.protocol() === 'file')
+            if ($location.protocol() === 'file') {
                 return;
-
-            var path = $location.path()
+            }
+            var path = $location.path(),
             // Note: misnomer. This returns a query object, not a search string
-                ,
                 search = $location.search(),
                 params;
 
@@ -130,9 +129,9 @@ angular.module('vcApp', [
     .run(function($rootScope, $state, Auth) {
 
         //Redirect to login if route requires auth and you're not logged in
-        $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams) {
+        $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState) {
             if (!Auth.authorize(toState.data.access)) {
-                $rootScope.error = "Seems like you tried accessing a route you don't have access to...";
+                $rootScope.error = 'Seems like you tried accessing a route you don\'t have access to...';
                 event.preventDefault();
 
                 if (fromState.url === '^') {

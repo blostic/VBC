@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('vcApp')
-    .controller('RegisterCtrl', function($scope, Auth, $location) {
+    .controller('RegisterCtrl', function($rootScope, $scope, Auth, $location) {
         $scope.role = Auth.userRoles.user;
         $scope.userRoles = Auth.userRoles;
 
