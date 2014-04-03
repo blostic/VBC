@@ -1,111 +1,60 @@
 'use strict';
 
 angular.module('vcApp')
-    .factory('Auth', function Auth($location, $rootScope, Session, User, $cookieStore) {
+    .factory('Auth', function($http, $cookieStore) {
 
-        // Get currentUser from cookie
-        $rootScope.currentUser = $cookieStore.get('user') || null;
+        var accessLevels = routingConfig.accessLevels,
+            userRoles = routingConfig.userRoles,
+            currentUser = $cookieStore.get('user') || {
+                username: '',
+                role: userRoles.public
+            };
+
         $cookieStore.remove('user');
 
+        function changeUser(user) {
+            angular.extend(currentUser, user);
+            console.log(currentUser);
+        }
+
         return {
+            authorize: function(accessLevel, role) {
+                if (role === undefined) {
+                    role = currentUser.role;
+                }
 
-            /**
-             * Authenticate user
-             *
-             * @param  {Object}   user     - login info
-             * @param  {Function} callback - optional
-             * @return {Promise}
-             */
-            login: function(user, callback) {
-                var cb = callback || angular.noop;
-
-                return Session.save({
-                    email: user.email,
-                    password: user.password
-                }, function(user) {
-                    $rootScope.currentUser = user;
-                    return cb();
-                }, function(err) {
-                    return cb(err);
-                }).$promise;
+                return accessLevel.bitMask & role.bitMask;
             },
-
-            /**
-             * Unauthenticate user
-             *
-             * @param  {Function} callback - optional
-             * @return {Promise}
-             */
-            logout: function(callback) {
-                var cb = callback || angular.noop;
-
-                return Session.delete(function() {
-                        $rootScope.currentUser = null;
-                        return cb();
-                    },
-                    function(err) {
-                        return cb(err);
-                    }).$promise;
+            isLoggedIn: function(user) {
+                if (user === undefined) {
+                    user = currentUser;
+                }
+                return user.role.title === userRoles.user.title || user.role.title === userRoles.admin.title;
             },
-
-            /**
-             * Create a new user
-             *
-             * @param  {Object}   user     - user info
-             * @param  {Function} callback - optional
-             * @return {Promise}
-             */
-            createUser: function(user, callback) {
-                var cb = callback || angular.noop;
-
-                return User.save(user,
-                    function(user) {
-                        $rootScope.currentUser = user;
-                        return cb(user);
-                    },
-                    function(err) {
-                        return cb(err);
-                    }).$promise;
+            register: function(user, success, error) {
+                $http.post('/api/register', user).success(function(res) {
+                    changeUser(res);
+                    success();
+                }).error(error);
             },
-
-            /**
-             * Change password
-             *
-             * @param  {String}   oldPassword
-             * @param  {String}   newPassword
-             * @param  {Function} callback    - optional
-             * @return {Promise}
-             */
-            changePassword: function(oldPassword, newPassword, callback) {
-                var cb = callback || angular.noop;
-
-                return User.update({
-                    oldPassword: oldPassword,
-                    newPassword: newPassword
-                }, function(user) {
-                    return cb(user);
-                }, function(err) {
-                    return cb(err);
-                }).$promise;
+            login: function(user, success, error) {
+                console.log(user);
+                $http.post('/api/login', user).success(function(user) {
+                    changeUser(user);
+                    success(user);
+                }).error(error);
             },
-
-            /**
-             * Gets all available info on authenticated user
-             *
-             * @return {Object} user
-             */
-            currentUser: function() {
-                return User.get();
+            logout: function(success, error) {
+                $http.post('/api/logout').success(function() {
+                    changeUser({
+                        username: '',
+                        role: userRoles.public
+                    });
+                    success();
+                }).error(error);
             },
-
-            /**
-             * Simple check to see if a user is logged in
-             *
-             * @return {Boolean}
-             */
-            isLoggedIn: function() {
-                var user = $rootScope.currentUser;
-                return !!user;
-            },
+            accessLevels: accessLevels,
+            userRoles: userRoles,
+            user: currentUser
         };
     });

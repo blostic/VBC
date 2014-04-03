@@ -17,7 +17,12 @@ html.no-js
     // endbuild
 
   body(ng-app="vcApp")
-    div(class="container" ng-view)
+    div(ng-include='\'partials/navbar\'')
+    .container(data-ui-view)
+    #alertBox.alert.alert-danger(data-ng-show="error")
+        button(type="button", class="close", data-ng-click="error = null;") &times;
+        strong Oh no!&nbsp;
+        span(data-ng-bind="error")
     // build:js(app) scripts/vendor.js
     script(src='bower_components/jquery/dist/jquery.js')
     script(src='bower_components/angular/angular.js')
@@ -25,18 +30,21 @@ html.no-js
     script(src='bower_components/angular-resource/angular-resource.js')
     script(src='bower_components/angular-cookies/angular-cookies.js')
     script(src='bower_components/angular-sanitize/angular-sanitize.js')
-    script(src='bower_components/angular-route/angular-route.js')
+    script(src='bower_components/angular-ui-router/release/angular-ui-router.js')
     // endbower
     // build:js({.tmp,app}) scripts/scripts.js
+    script(src='scripts/routingConfig.js')
     script(src='scripts/app.js')
     script(src='scripts/controllers/main.js')
     script(src='scripts/controllers/navbar.js')
     script(src='scripts/controllers/login.js')
-    script(src='scripts/controllers/signup.js')
+    script(src='scripts/controllers/register.js')
     script(src='scripts/controllers/settings.js')
     script(src='scripts/services/auth.js')
     script(src='scripts/services/session.js')
     script(src='scripts/services/user.js')
     script(src='scripts/directives/mongooseError.js')
+    script(src='scripts/directives/activeNav.js')
+    script(src='scripts/directives/accessLevel.js')
     // endbuild
     

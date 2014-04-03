@@ -1,27 +1,21 @@
 'use strict';
 
 angular.module('vcApp')
-    .controller('LoginCtrl', function($scope, Auth, $location) {
+    .controller('LoginCtrl', function($rootScope, $scope, Auth, $location) {
+        $scope.rememberme = true;
         $scope.user = {};
-        $scope.errors = {};
-
-        $scope.login = function(form) {
-            $scope.submitted = true;
-
-            if (form.$valid) {
-                Auth.login({
-                    email: $scope.user.email,
-                    password: $scope.user.password
-                })
-                    .then(function() {
-                        // Logged in, redirect to home
-                        $location.path('/');
-                    })
-                    .
-                catch (function(err) {
-                    err = err.data;
-                    $scope.errors.other = err.message;
+        $scope.login = function() {
+            Auth.login({
+                    email: $scope.email,
+                    password: $scope.password,
+                    rememberme: $scope.rememberme
+                },
+                function(res) {
+                    $location.path('/');
+                },
+                function(err) {
+                    $rootScope.error = "Failed to login";
                 });
-            }
         };
+
     });

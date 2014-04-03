@@ -1,23 +1,18 @@
 'use strict';
 
 angular.module('vcApp')
-    .controller('NavbarCtrl', function($scope, $location, Auth) {
-        $scope.menu = [{
-            'title': 'Home',
-            'link': '/'
-        }, {
-            'title': 'Settings',
-            'link': '/settings'
-        }];
+    .controller('NavbarCtrl', ['$rootScope', '$scope', '$location', 'Auth',
+        function($rootScope, $scope, $location, Auth) {
+            $scope.user = Auth.user;
+            $scope.userRoles = Auth.userRoles;
+            $scope.accessLevels = Auth.accessLevels;
 
-        $scope.logout = function() {
-            Auth.logout()
-                .then(function() {
+            $scope.logout = function() {
+                Auth.logout(function() {
                     $location.path('/login');
+                }, function() {
+                    $rootScope.error = "Failed to logout";
                 });
-        };
-
-        $scope.isActive = function(route) {
-            return route === $location.path();
-        };
-    });
+            };
+        }
+    ]);
