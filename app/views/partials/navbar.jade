@@ -18,10 +18,10 @@
                 li(data-access-level='accessLevels.anon', active-nav)
                     a(href='/register') Register
                 li.dropdown(data-access-level='accessLevels.user')
-                    a(href='#',data-toggle='dropdown')
+                    a(href='',data-toggle='dropdown')
                         | {{ user.username }}
                     ul.dropdown-menu
                         li(data-access-level='accessLevels.user')
-                            a(href="", data-ng-click="logout()")
+                            a(href='', data-ng-click="logout()")
                                 | Log out
 

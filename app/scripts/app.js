@@ -54,8 +54,8 @@ angular.module('vcApp', [
             })
             .state('user.home', {
                 url: '/',
-                templateUrl: '/partials/main',
-                controller: 'MainCtrl'
+                templateUrl: '/partials/home',
+                controller: 'HomeCtrl'
             })
             .state('user.newJob', {
                 url: '/newjob/',
@@ -82,7 +82,7 @@ angular.module('vcApp', [
             });
 
 
-        $urlRouterProvider.otherwise('/partials/404');
+        $urlRouterProvider.otherwise('/404');
 
         // FIX for trailing slashes. Gracefully "borrowed" from https://github.com/angular-ui/ui-router/issues/50
         $urlRouterProvider.rule(function($injector, $location) {
@@ -119,7 +119,7 @@ angular.module('vcApp', [
             return {
                 'responseError': function(response) {
                     if (response.status === 401 || response.status === 403) {
-                        $location.path('/login');
+                        $location.path('/');
                     }
                     return $q.reject(response);
                 }

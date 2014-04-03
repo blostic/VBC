@@ -1,6 +1,6 @@
 'use strict';
 
 angular.module('vcApp')
-    .controller('MainCtrl', function($scope, Auth) {
+    .controller('HomeCtrl', function($scope, Auth) {
         $scope.user = Auth.user;
     });
