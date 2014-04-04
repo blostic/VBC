@@ -1,7 +1,6 @@
 {
   "node": true,
   "esnext": true,
-  "bitwise": true,
   "eqeqeq": true,
   "immed": true,
   "latedef": true,
