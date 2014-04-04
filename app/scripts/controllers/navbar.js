@@ -11,7 +11,7 @@ angular.module('vcApp')
                 Auth.logout(function() {
                     $location.path('/login');
                 }, function() {
-                    $rootScope.error = "Failed to logout";
+                    $rootScope.error = 'Failed to logout';
                 });
             };
         }

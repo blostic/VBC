@@ -1,12 +1,13 @@
 'use strict';
 
 var should = require('should'),
+    app = require('../../../server'),
     mongoose = require('mongoose'),
     User = mongoose.model('User');
 
 var user;
 
-describe('User Model', function() {
+xdescribe('User Model', function() {
     before(function(done) {
         user = new User({
             provider: 'local',

@@ -10,23 +10,28 @@ angular.module('vcApp').directive('accessLevel', ['Auth',
 
                 $scope.user = Auth.user;
                 $scope.$watch('user', function(user) {
-                    console.log("directive usr: " + JSON.stringify(user));
-                    if (user.role)
+                    console.log('directive usr: ' + JSON.stringify(user));
+                    if (user.role){
                         userRole = user.role;
+                    }
                     updateCSS();
                 }, true);
 
                 attrs.$observe('accessLevel', function(al) {
-                    if (al) accessLevel = $scope.$eval(al);
+                    if (al) {
+                        accessLevel = $scope.$eval(al);
+                    }
                     updateCSS();
                 });
 
                 function updateCSS() {
                     if (userRole && accessLevel) {
-                        if (!Auth.authorize(accessLevel, userRole))
+                        if (!Auth.authorize(accessLevel, userRole)) {
                             element.css('display', 'none');
-                        else
+                        }
+                        else {
                             element.css('display', prevDisp);
+                        }
                     }
                 }
             }
