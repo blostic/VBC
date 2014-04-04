@@ -1,7 +1,19 @@
-h1 Client {{user.username}} has following Jobs
-ul
+h1 Client {{user.username}} has created following Jobs
+    br
+    br
     li(ng-repeat="job in jobs")
-        h2 Job:
-        h4 {{ job.creation_date }}
-        h4 status: {{job.status}}
-        h4 code:   {{job.code}}
+
+        #test
+            h4 Job:
+                dd
+                    b creation date:
+                    {{ job.creation_date }}
+                dd
+                    b status:
+                    {{job.status}}
+                dd
+                    b code:
+                    {{job.code}}
+                br
+        br
+
