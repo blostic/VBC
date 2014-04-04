@@ -8,7 +8,8 @@ angular.module('vcApp')
             currentUser = $cookieStore.get('user') || {
                 username: '',
                 role: userRoles.public
-            };
+            },
+            currentJobs =  "Mam jakies zadanie";
 
         $cookieStore.remove('user');
 
@@ -44,7 +45,7 @@ angular.module('vcApp')
                     success(user);
                 }).error(error);
             },
-            logout: function(success, error) {
+            logout: function(user, success, error) {
                 $http.post('/api/logout').success(function() {
                     changeUser({
                         username: '',
@@ -53,6 +54,12 @@ angular.module('vcApp')
                     success();
                 }).error(error);
             },
+
+            show_jobs: function( success, error) {
+                $http.get('/api/showJobs').success(success).error(error);
+            },
+
+            currentJobs: currentJobs,
             accessLevels: accessLevels,
             userRoles: userRoles,
             user: currentUser
