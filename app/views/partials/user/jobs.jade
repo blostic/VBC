@@ -1,6 +1,7 @@
-h1 Strona ze statusem jobow
-    h2 Client {{user.username}} has following Jobs
-
-    //h2  {{jobs}}
-    for job in {{jobs}}
-        p #{job}
+h1 Client {{user.username}} has following Jobs
+ul
+    li(ng-repeat="job in jobs")
+        h2 Job:
+        h4 {{ job.creation_date }}
+        h4 status: {{job.status}}
+        h4 code:   {{job.code}}
