@@ -10,6 +10,8 @@ angular.module('vcApp')
                 role: userRoles.public
             };
 
+        $cookieStore.remove('user');
+
         function changeUser(user) {
             angular.extend(currentUser, user);
             console.log(currentUser);
