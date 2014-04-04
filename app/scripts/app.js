@@ -59,7 +59,8 @@ angular.module('vcApp', [
             })
             .state('user.newJob', {
                 url: '/newjob/',
-                templateUrl: '/partials/user/newjob'
+                templateUrl: '/partials/user/newjob',
+                controller: 'AddJobCtrl'
             })
             .state('user.jobs', {
                 url: '/jobs/',
