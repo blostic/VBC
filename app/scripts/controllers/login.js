@@ -14,7 +14,7 @@ angular.module('vcApp')
                     $location.path('/');
                 },
                 function(err) {
-                    $rootScope.error = 'Failed to login' + err;
+                    $scope.errors = err;
                 });
         };
 
