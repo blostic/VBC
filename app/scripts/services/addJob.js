@@ -3,8 +3,7 @@
 angular.module('vcApp')
     .factory('AddJob', function($http, $cookieStore) {
         return {
-            addJob: function(accessLevel, role) {
-                alert('WYSYLAM POSTA');
+            addJob: function(user, success, error) {
                 $http.post('/api/addJob', user).success(function(res) {
                     alert(res);
                     success();
