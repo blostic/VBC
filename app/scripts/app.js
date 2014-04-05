@@ -63,7 +63,8 @@ angular.module('vcApp', [
             })
             .state('user.jobs', {
                 url: '/jobs/',
-                templateUrl: '/partials/user/jobs'
+                templateUrl: '/partials/user/jobs',
+                controller: "JobsCtrl"
             });
 
         // Admin routes

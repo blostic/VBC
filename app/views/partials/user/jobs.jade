@@ -1,1 +1,19 @@
-h1 Strona ze statusem jobow
+h1 Client {{user.username}} has created following Jobs
+    br
+    br
+    li(ng-repeat="job in jobs")
+
+        #test
+            h4 Job:
+                dd
+                    b creation date:
+                    {{ job.creation_date }}
+                dd
+                    b status:
+                    {{job.status}}
+                dd
+                    b code:
+                    {{job.code}}
+                br
+        br
+

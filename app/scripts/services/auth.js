@@ -44,7 +44,7 @@ angular.module('vcApp')
                     success(user);
                 }).error(error);
             },
-            logout: function(success, error) {
+            logout: function(user, success, error) {
                 $http.post('/api/logout').success(function() {
                     changeUser({
                         username: '',
@@ -53,6 +53,11 @@ angular.module('vcApp')
                     success();
                 }).error(error);
             },
+
+            show_jobs: function( success, error) {
+                $http.get('/api/showJobs').success(success).error(error);
+            },
+
             accessLevels: accessLevels,
             userRoles: userRoles,
             user: currentUser
