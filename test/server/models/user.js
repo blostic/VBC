@@ -7,7 +7,7 @@ var should = require('should'),
 
 var user;
 
-xdescribe('User Model', function() {
+describe('User Model', function() {
     before(function(done) {
         user = new User({
             provider: 'local',
@@ -34,16 +34,26 @@ xdescribe('User Model', function() {
     });
 
     it('should fail when saving a duplicate user', function(done) {
-        user.save();
-        var userDup = new User(user);
-        userDup.save(function(err) {
+        user.save(function (){
+            var userDup = new User(user);
+            userDup.save(function(err) {
+                should.exist(err);
+                done();
+            });
+        });
+
+    });
+
+    it('should fail when saving without an email', function(done) {
+        user.email = '';
+        user.save(function(err) {
             should.exist(err);
             done();
         });
     });
 
-    it('should fail when saving without an email', function(done) {
-        user.email = '';
+    it('should fail when saving with incorrect email', function(done) {
+        user.email = 'iuyoiuyoiuyoiuyoiuyi';
         user.save(function(err) {
             should.exist(err);
             done();

@@ -10,7 +10,6 @@ angular.module('vcApp')
                 email: $scope.email,
                 password: $scope.password
             };
-            console.log(userData);
             Auth.register(userData,
                 function() {
                     $location.path('/');
