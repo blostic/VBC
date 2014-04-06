@@ -14,7 +14,7 @@ angular.module('vcApp').directive('activeNav', ['$location',
             restrict: 'A',
             link: function(scope, element, attrs) {
                 var anchor = element[0];
-                if (element[0].tagName.toUpperCase() !== 'A'){
+                if (element[0].tagName.toUpperCase() !== 'A') {
                     anchor = element.find('a')[0];
                 }
                 var path = anchor.href;

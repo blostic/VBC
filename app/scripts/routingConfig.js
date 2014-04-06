@@ -42,10 +42,9 @@
             } else {
                 resultBitMask = 0;
                 for (role in accessLevelDeclarations[level]) {
-                    if (userRoles.hasOwnProperty(accessLevelDeclarations[level][role])){
+                    if (userRoles.hasOwnProperty(accessLevelDeclarations[level][role])) {
                         resultBitMask = resultBitMask | userRoles[accessLevelDeclarations[level][role]].bitMask;
-                    }
-                    else {
+                    } else {
                         console.log("Access Control Error: Could not find role '" + accessLevelDeclarations[level][role] + "' in registered roles while building access for '" + level + "'");
                     }
                 }

@@ -10,7 +10,7 @@ angular.module('vcApp')
                     password: $scope.password,
                     rememberme: $scope.rememberme
                 },
-                function(/*res*/) {
+                function( /*res*/ ) {
                     $location.path('/');
                 },
                 function(err) {

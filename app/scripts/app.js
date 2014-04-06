@@ -91,7 +91,7 @@ angular.module('vcApp', [
                 return;
             }
             var path = $location.path(),
-            // Note: misnomer. This returns a query object, not a search string
+                // Note: misnomer. This returns a query object, not a search string
                 search = $location.search(),
                 params;
 

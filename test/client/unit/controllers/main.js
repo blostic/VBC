@@ -20,6 +20,5 @@ describe('Controller: HomeCtrl', function() {
         });
     }));
 
-    it('should be implemented', function() {
-    });
+    it('should be implemented', function() {});
 });
