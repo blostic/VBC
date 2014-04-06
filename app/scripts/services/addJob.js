@@ -5,9 +5,10 @@ angular.module('vcApp')
         return {
             addJob: function(user, success, error) {
                 $http.post('/api/addJob', user).success(function(res) {
-                    alert(res);
                     success();
-                }).error(error);
+                }).error(function(res) {
+                    alert(res);
+                });
             }
         };
     });
