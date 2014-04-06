@@ -1,15 +1,17 @@
 'use strict';
 
 var _         = require('lodash'),
+    ObjectId  = require('mongoose').Types.ObjectId,
     Scheduler = require('../../lib/scheduler'),
-    Models    = require('../../lib/models/job');
+    Job       = require('../../lib/models/job'),
+    Task      = require('../../lib/models/task');
 
 describe('Scheduler', function () {
     var scheduler;
 
     var cleanCollections = function (done) {
-        Models.Job.remove({}, function () {
-            Models.Task.remove({}, function () {
+        Job.remove({}, function () {
+            Task.remove({}, function () {
                 done();
             });
         });
@@ -23,55 +25,69 @@ describe('Scheduler', function () {
     });
 
     it('should create new job if createJob(...) called', function (done) {
-        var data = { left: 0, right: 10 };
+        var data = { left: 0, right: 10 },
+            userId = ObjectId();
 
-        scheduler.createJob(data, function (err, job) {
+        scheduler.createJob(data, userId, function (err, job) {
             job.status.should.be.equal("new");
             job.data.should.eql(data);
+            job.owner.should.eql(userId);
             done();
         });
     });
 
     it('should split job if splitJob(...) called', function (done) {
-        var job = new Models.Job({
+        var job = new Job({
             data : {},
             status : "new"
         });
+
         scheduler.splitJob(job, function (err, job) {
-            job.status.should.be.equal("prepared");
-            job.tasks.length.should.be.equal(1);
-            job.tasks[0].status.should.equal("new");
-            done();
+            Task.find({ job : job.id }).exec(function (err, tasks) {
+                job.status.should.be.equal("prepared");
+                tasks.length.should.be.equal(1);
+                tasks[0].status.should.equal("new");
+                done();
+            });
         });
     });
 
     it('should enqueue tasks to slaves', function (done) {
         var data = {},
-            tasks = [new Models.Task({
+            task = new Task({
                 status : "new",
-                data : data
-            })],
-            job = new Models.Job({
+                data : data,
+                code : "return 42;"
+            }),
+            job = new Job({
                 data : data,
                 status : "prepared",
-                tasks : tasks,
                 code : "return 42;"
             });
-        scheduler.reducer = function (job) {
-            return job.tasks[0].partial_result;
+
+        scheduler.reducer = function (tasks) {
+            return tasks[0].partial_result;
         };
+
         job.save(function (err, job) {
-            scheduler.enqueueJob(job, function (err, job) {
-                job.tasks[0].status.should.equal("executing");
-                job.status.should.equal("executing");
-                _.delay(function () {
-                    Models.Job.findById(job.id, function (err, job) {
-                        job.tasks[0].status.should.equal("completed");
-                        job.result.should.equal(42);
-                        job.status.should.equal("completed");
-                        done();
+            task.job = job.id;
+            task.save(function (err, task) {
+                scheduler.enqueueJob(job, function (err, job) {
+                    Task.find({ job : job.id }).exec(function (err, tasks) {
+                        tasks[0].status.should.equal("executing");
+                        job.status.should.equal("executing");
+                        _.delay(function () {
+                            Job.findById(job.id, function (err, job) {
+                                Task.find({ job : job.id }).exec(function (err, tasks) {
+                                    tasks[0].status.should.equal("completed");
+                                    job.result.should.equal(42);
+                                    job.status.should.equal("completed");
+                                    done();
+                                });
+                            });
+                        }, 10);
                     });
-                }, 10);
+                });
             });
         });
     });
