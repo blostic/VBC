@@ -65,7 +65,8 @@
     "grunt-jsbeautifier": "~0.2.6",
     "grunt-contrib-stylus": "~0.13.2",
     "stylus": "~0.42.3",
-    "nib": ""
+    "nib": "",
+    "passport-stub": "0.1.5"
   },
   "engines": {
     "node": ">=0.10.0"

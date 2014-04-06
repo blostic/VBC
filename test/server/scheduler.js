@@ -71,7 +71,7 @@ describe('Scheduler', function () {
                         job.status.should.equal("completed");
                         done();
                     });
-                }, 10);
+                }, 50);
             });
         });
     });
