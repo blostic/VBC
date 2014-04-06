@@ -555,12 +555,13 @@ module.exports = function(grunt) {
         }
 
         grunt.task.run([
-            'env:test',
-            'mochaTest',
             'clean:server',
+            'express:dev',
             'concurrent:test',
             'autoprefixer',
-            'karma'
+            'karma',
+            'env:test',
+            'mochaTest'
         ]);
     });
 
