@@ -4,7 +4,7 @@ br
 form.form(name='form', ng-submit='addJob(form)')
     .form-group
         .row
-            label Input data (range, e.g. 4,14)
+            label Input data (range as JSON array, e.g. [4,14])
         .row
             textarea.job-data(name='data', ng-model='data')
     .row
