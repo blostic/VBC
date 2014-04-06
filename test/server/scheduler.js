@@ -54,11 +54,9 @@ describe('Scheduler', function () {
             job = new Models.Job({
                 data : data,
                 status : "prepared",
-                tasks : tasks
+                tasks : tasks,
+                code : "return 42;"
             });
-        scheduler.solver = function () {
-            return 42;
-        };
         scheduler.reducer = function (job) {
             return job.tasks[0].partial_result;
         };
