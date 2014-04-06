@@ -4,7 +4,7 @@ br
 form.form(name='form', ng-submit='addJob(form)')
     .form-group
         .row
-            label Input data (JSON array)
+            label Input data (range, e.g. 4,14)
         .row
             textarea.job-data(name='data', ng-model='data')
     .row
@@ -13,3 +13,4 @@ form.form(name='form', ng-submit='addJob(form)')
         p.label.label-danger(ng-show='errors')
             | {{errors.message}}
         span.clearfix
+
