@@ -547,6 +547,7 @@ module.exports = function(grunt) {
         if (target === 'client') {
             return grunt.task.run([
                 'clean:server',
+                'express:dev',
                 'concurrent:test',
                 'autoprefixer',
                 'karma'

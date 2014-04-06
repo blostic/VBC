@@ -5,8 +5,8 @@
 describe('PhoneCat App', function() {
 
     it('should redirect index.html to index.html#/phones', function() {
-        browser().navigateTo('settings');
-        //expect(browser().location().url()).toBe('/login');
+        browser().navigateTo('/');
+        expect(browser().location().url()).toBe('/login/');
     });
 
 });

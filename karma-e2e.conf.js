@@ -25,9 +25,6 @@ module.exports = function(config) {
         // list of files / patterns to exclude
         exclude: [],
 
-        // web server port
-        port: 3000,
-
         // level of logging
         // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
         logLevel: config.LOG_INFO,
@@ -50,13 +47,13 @@ module.exports = function(config) {
 
         // Continuous Integration mode
         // if true, it capture browsers, run tests and exit
-        singleRun: false
+        singleRun: true,
 
         // Uncomment the following lines if you are using grunt's server to run the tests
-        // proxies: {
-        //   '/': 'http://localhost:9000/'
-        // },
-        // URL root prevent conflicts with the site root
-        // urlRoot: '_karma_'
+        proxies: {
+            '/': 'http://localhost:3000/'
+        },
+//        URL root prevent conflicts with the site root
+        urlRoot: '/__karma__/'
     });
 };
