@@ -85,7 +85,7 @@ describe('Scheduler', function () {
                                     done();
                                 });
                             });
-                        }, 10);
+                        }, 50);
                     });
                 });
             });

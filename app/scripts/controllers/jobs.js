@@ -6,12 +6,12 @@ angular.module('vcApp')
         $scope.user = Auth.user;
         Auth.show_jobs(function(res) {
             var jobs = res.usr.jobs;
-            for (var job in jobs){
+            for (var job in jobs) {
                 var finished = 0;
                 var allTasks = 0;
                 var tasks = jobs[job].tasks;
                 for (var task in tasks) {
-                    if (  tasks[task].status == "finished"){
+                    if (tasks[task].status == "finished") {
                         finished++;
                     }
                     allTasks++;
@@ -20,6 +20,7 @@ angular.module('vcApp')
                 jobs[job].finished = finished;
             }
             $scope.jobs = jobs;
+
         }, function(err) {
             alert("Fail");
 
