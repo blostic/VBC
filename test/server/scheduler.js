@@ -60,7 +60,7 @@ describe('Scheduler', function () {
             return 42;
         };
         scheduler.reducer = function (job) {
-            return job.tasks[0].partialResult;
+            return job.tasks[0].partial_result;
         };
         job.save(function (err, job) {
             scheduler.enqueueJob(job, function (err, job) {
