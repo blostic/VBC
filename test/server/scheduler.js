@@ -1,6 +1,6 @@
 'use strict';
 
-var Sinon     = require('sinon'),
+var _         = require('lodash'),
     Scheduler = require('../../lib/scheduler'),
     Models    = require('../../lib/models/job');
 
@@ -31,6 +31,7 @@ describe('Scheduler', function () {
             done();
         });
     });
+
     it('should split job if splitJob(...) called', function (done) {
         var job = new Models.Job({
             data : {},
@@ -43,8 +44,37 @@ describe('Scheduler', function () {
             done();
         });
     });
-    it('should remove a task if delete_task(...) called');
-    it('should list tasks');
-    it('should return task state');
-    it('should enqueue jobs to slaves');
+
+    it('should enqueue tasks to slaves', function (done) {
+        var data = {},
+            tasks = [new Models.Task({
+                status : "new",
+                data : data
+            })],
+            job = new Models.Job({
+                data : data,
+                status : "prepared",
+                tasks : tasks
+            });
+        scheduler.solver = function () {
+            return 42;
+        };
+        scheduler.reducer = function (job) {
+            return job.tasks[0].partialResult;
+        };
+        job.save(function (err, job) {
+            scheduler.enqueueJob(job, function (err, job) {
+                job.tasks[0].status.should.equal("executing");
+                job.status.should.equal("executing");
+                _.delay(function () {
+                    Models.Job.findById(job.id, function (err, job) {
+                        job.tasks[0].status.should.equal("completed");
+                        job.result.should.equal(42);
+                        job.status.should.equal("completed");
+                        done();
+                    });
+                }, 10);
+            });
+        });
+    });
 });
