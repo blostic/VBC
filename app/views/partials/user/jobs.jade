@@ -1,19 +1,23 @@
 h1 Client {{user.username}} has created following Jobs
     br
     br
-    li(ng-repeat="job in jobs")
-
+    lp(ng-repeat="job in jobs")
         #test
-            h4 Job:
+            #leftBox
                 dd
-                    b creation date:
-                    {{ job.creation_date }}
+                    h4
+                        b creation date: {{ job.creation_date }}
                 dd
-                    b status:
-                    {{job.status}}
-                dd
-                    b code:
-                    {{job.code}}
+                    h4
+                        b status: {{job.status}}
+            #rightBox
+                #mar
+                .box.effect7
+                       h4
+                         #mar
+                            b code:
+                            <br>
+                            {{job.code}}
                 br
         br
 
