@@ -1,11 +1,11 @@
 #leftBox {
     float:left;
-    width: 60%;
+    width: 40%;
 }
 
 #rightBox {
     float:right;
-    width: 40%;
+    width: 60%;
 }
 #mar{
     margin-top:20px;
@@ -40,7 +40,7 @@
     position:relative;
 }
 .box {
-    width:40%;
+    width:90%;
     height:auto;
     background:#FFF;
     margin: 20px;
