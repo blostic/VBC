@@ -44,7 +44,7 @@ angular.module('vcApp')
                     success(user);
                 }).error(error);
             },
-            logout: function(user, success, error) {
+            logout: function(success, error) {
                 $http.post('/api/logout').success(function() {
                     changeUser({
                         username: '',

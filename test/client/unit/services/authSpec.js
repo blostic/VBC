@@ -169,7 +169,7 @@ describe('Service: Auth', function() {
             };
             var error = function() {};
             $httpBackend.expectPOST('/api/logout').respond();
-            Auth.logout(user, success, error);
+            Auth.logout(success, error);
             $httpBackend.flush();
             expect(invoked).toBeTruthy();
         });
