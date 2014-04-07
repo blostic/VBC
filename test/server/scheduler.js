@@ -26,9 +26,10 @@ describe('Scheduler', function () {
 
     it('should create new job if createJob(...) called', function (done) {
         var data = { left: 0, right: 10 },
-            userId = ObjectId();
+            userId = ObjectId(),
+            code = 'function() { return 42; }';
 
-        scheduler.createJob(data, userId, function (err, job) {
+        scheduler.createJob(code, data, userId, function (err, job) {
             job.status.should.be.equal("new");
             job.data.should.eql(data);
             job.owner.should.eql(userId);
@@ -57,12 +58,12 @@ describe('Scheduler', function () {
             task = new Task({
                 status : "new",
                 data : data,
-                code : "return 42;"
+                code : "function(data) { return 42; }"
             }),
             job = new Job({
                 data : data,
                 status : "prepared",
-                code : "return 42;"
+                code : "function() { return 42; }"
             });
 
         scheduler.reducer = function (tasks) {
