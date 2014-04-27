@@ -1,13 +1,54 @@
 'use strict';
 
 var _         = require('lodash'),
-    ObjectId  = require('mongoose').Types.ObjectId,
+    Q         = require('q'),
+    mongoose  = require('mongoose-q')(require('mongoose')),
+    ObjectId  = mongoose.Types.ObjectId,
     Scheduler = require('../../lib/scheduler'),
     Job       = require('../../lib/models/job'),
     Task      = require('../../lib/models/task');
 
 describe('Scheduler', function () {
-    var scheduler;
+    var scheduler,
+        slaveManager,
+        fail = function (msg) { throw new Error(msg); },
+        job_types = {
+            testowy : {
+                solver : function (data) {
+                    var s = 0,
+                        i = data.a;
+
+                    while (i !== data.b) {
+                        s += i;
+                        i++;
+                    }
+
+                    return s + i;
+                },
+                reducer : function (results) {
+                    return _.reduce(results, function (memo, num) {
+                        return memo + num;
+                    });
+                },
+                splitter : function (data) {
+                    var a = Math.floor((data.a + data.b)/2),
+                        b = a + 1;
+                    return [{
+                        a : data.a,
+                        b : b
+                    },{
+                        a : a,
+                        b : data.b
+                    }];
+                }
+            }
+        };
+
+    var SlaveManager = function () { };
+    SlaveManager.prototype = {
+        enqueue : function () {},
+        dequeue : function () {}
+    };
 
     var cleanCollections = function (done) {
         Job.remove({}, function () {
@@ -19,77 +60,185 @@ describe('Scheduler', function () {
 
     beforeEach(function (done) {
         cleanCollections(function () {
-            scheduler = new Scheduler();
+            slaveManager = new SlaveManager();
+            scheduler = new Scheduler({
+                job_types : job_types,
+                slave_manager : slaveManager
+            });
             done();
         });
     });
 
-    it('should create new job if createJob(...) called', function (done) {
-        var data = { left: 0, right: 10 },
-            userId = ObjectId(),
-            code = 'function() { return 42; }';
+    describe('#createJob', function () {
+        it('should create new job', function (done) {
+            var data    = { a : 0, b : 10 },
+                userId  = new ObjectId(),
+                jobType = "testowy";
 
-        scheduler.createJob(code, data, userId, function (err, job) {
-            job.status.should.be.equal("new");
-            job.data.should.eql(data);
-            job.owner.should.eql(userId);
-            done();
+            scheduler.createJob(jobType, data, userId)
+            .then(function (job) {
+                job.status.should.be.equal("new");
+                job.data.should.eql(data);
+                job.owner.should.eql(userId);
+                job.type.should.eql(jobType);
+                done();
+            })
+            .done();
+        });
+
+        it('should fail if job type doesn\'t exist', function (done) {
+            var data    = { a : 0, b : 10 },
+                userId  = new ObjectId(),
+                jobType = "testwy";
+
+            scheduler.createJob(jobType, data, userId)
+            .then(fail)
+            .fail(done)
+            .done();
         });
     });
 
-    it('should split job if splitJob(...) called', function (done) {
-        var job = new Job({
-            data : {},
-            status : "new"
-        });
+    describe('#splitJobs', function () {
+        it('should split job', function (done) {
+            var job = new Job({
+                status : "new",
+                data   : { a : 0, b : 10 },
+                job_type : "testowy"
+            });
 
-        scheduler.splitJob(job, function (err, job) {
-            Task.find({ job : job.id }).exec(function (err, tasks) {
-                job.status.should.be.equal("prepared");
-                tasks.length.should.be.equal(1);
+            job.saveQ()
+            .then(function (job) {
+                return scheduler.splitJob(job.id);
+            })
+            .then(function (tasks) {
+                tasks.length.should.equal(2);
+                return Task.findQ({ parent : job.id });
+            })
+            .then(function (tasks) {
+                tasks.length.should.equal(2);
+                tasks[0].data.should.eql({a : 0, b : 5});
+                tasks[1].data.should.eql({a : 6, b : 10});
                 tasks[0].status.should.equal("new");
                 done();
+            })
+            .fail(fail)
+            .done();
+
+        });
+
+        it('should fail if no job found', function (done) {
+            scheduler.splitJob(new ObjectId())
+            .then(fail)
+            .fail(done)
+            .done();
+        });
+
+        it('should fail if job has wrong state', function (done) {
+            var job = new Job({
+                status : "prepared",
+                data   : { a : 0, b : 10 },
+                job_type : "testowy"
             });
+
+            job.saveQ()
+            .then(function (job) {
+                return scheduler.splitJob(job.id);
+            }, fail)
+            .then(function () { throw new Error(); })
+            .fail(function () { done(); })
+            .done();
+        });
+
+        it('should fail if job type isn\'t found', function (done) {
+            var job = new Job({
+                status : "new",
+                data   : { a : 0, b : 10 },
+                job_type : "bad"
+            });
+
+            job.saveQ()
+            .then(function (job) {
+                return scheduler.splitJob(job.id);
+            })
+            .then(fail)
+            .fail(done)
+            .done();
         });
     });
 
-    it('should enqueue tasks to slaves', function (done) {
-        var data = {},
-            task = new Task({
-                status : "new",
-                data : data,
-                code : "function(data) { return 42; }"
-            }),
-            job = new Job({
-                data : data,
-                status : "prepared",
-                code : "function() { return 42; }"
-            });
+    describe('#enqueueJob', function () {
+        it('should call #enqueueTasks and #reduceTasks after completion', function (done) {
+            var enqueueCount = 0;
 
-        scheduler.reducer = function (tasks) {
-            return tasks[0].partial_result;
-        };
+            slaveManager.enqueue = function (tasks) {
+                tasks.length.should.equal(2);
+                enqueueCount++;
+                var deferred = Q.defer();
+                Job.findByIdQ(job.id)
+                .then(function (job) {
+                    job.status.should.eql('executing');
+                    deferred.resolve();
+                })
+                .fail(fail)
+                .done();
+                return deferred.promise;
+            };
 
-        job.save(function (err, job) {
-            task.job = job.id;
-            task.save(function (err, task) {
-                scheduler.enqueueJob(job, function (err, job) {
-                    Task.find({ job : job.id }).exec(function (err, tasks) {
-                        tasks[0].status.should.equal("executing");
-                        job.status.should.equal("executing");
-                        _.delay(function () {
-                            Job.findById(job.id, function (err, job) {
-                                Task.find({ job : job.id }).exec(function (err, tasks) {
-                                    tasks[0].status.should.equal("completed");
-                                    job.result.should.equal(42);
-                                    job.status.should.equal("completed");
-                                    done();
-                                });
-                            });
-                        }, 50);
-                    });
+            scheduler.reduceTasks = function () {
+                return 42;
+            };
+
+            var job = new Job({
+                    data : {},
+                    status : "prepared",
+                    job_type : "testowy"
+                }),
+                task1 = new Task({
+                    status : "new",
+                    job    : job.id
+                }),
+                task2 = new Task({
+                    status : "new",
+                    job    : job.id
                 });
+
+            job.saveQ()
+            .then(function () {
+                return task1.saveQ();
+            })
+            .then(function () {
+                return task2.saveQ();
+            })
+            .then(function () {
+                return scheduler.enqueueJob(job.id);
+            })
+            .then(function (results) {
+                results.should.equal(42);
+                enqueueCount.should.equal(1);
+                return Job.findByIdQ(job.id);
+            })
+            .then(function (job) {
+                job.status.should.eql('completed');
+                job.result.should.equal(42);
+                done();
+            })
+            .fail(fail)
+            .done();
+        });
+
+        it('should fail if invalid status', function (done) {
+            var job = new Job({
+                status : "executing",
+                job_type : "testowy"
             });
+
+            job.saveQ()
+            .then(function () {
+                return scheduler.enqueueJob(job.id);
+            })
+            .then(fail)
+            .fail(done)
+            .done();
         });
     });
 });
