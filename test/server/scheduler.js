@@ -31,8 +31,8 @@ describe('Scheduler', function () {
                     });
                 },
                 splitter : function (data) {
-                    var a = Math.floor((data.a + data.b)/2),
-                        b = a + 1;
+                    var b = Math.floor((data.a + data.b)/2),
+                        a = b + 1;
                     return [{
                         a : data.a,
                         b : b
@@ -62,8 +62,8 @@ describe('Scheduler', function () {
         cleanCollections(function () {
             slaveManager = new SlaveManager();
             scheduler = new Scheduler({
-                job_types : job_types,
-                slave_manager : slaveManager
+                jobTypes : job_types,
+                slaveManager : slaveManager
             });
             done();
         });
@@ -73,7 +73,8 @@ describe('Scheduler', function () {
         it('should create new job', function (done) {
             var data    = { a : 0, b : 10 },
                 userId  = new ObjectId(),
-                jobType = "testowy";
+                jobType = "testowy",
+                jobId;
 
             scheduler.createJob(jobType, data, userId)
             .then(function (job) {
@@ -81,6 +82,12 @@ describe('Scheduler', function () {
                 job.data.should.eql(data);
                 job.owner.should.eql(userId);
                 job.type.should.eql(jobType);
+
+                jobId = job.id;
+                return Job.findByIdQ(job.id);
+            })
+            .then(function (job) {
+                job.id.should.eql(jobId);
                 done();
             })
             .done();
@@ -93,7 +100,7 @@ describe('Scheduler', function () {
 
             scheduler.createJob(jobType, data, userId)
             .then(fail)
-            .fail(done)
+            .fail(function () { done(); })
             .done();
         });
     });
@@ -103,7 +110,7 @@ describe('Scheduler', function () {
             var job = new Job({
                 status : "new",
                 data   : { a : 0, b : 10 },
-                job_type : "testowy"
+                type : "testowy"
             });
 
             job.saveQ()
@@ -112,7 +119,7 @@ describe('Scheduler', function () {
             })
             .then(function (tasks) {
                 tasks.length.should.equal(2);
-                return Task.findQ({ parent : job.id });
+                return Task.findQ({ job : job.id });
             })
             .then(function (tasks) {
                 tasks.length.should.equal(2);
@@ -121,15 +128,13 @@ describe('Scheduler', function () {
                 tasks[0].status.should.equal("new");
                 done();
             })
-            .fail(fail)
             .done();
 
         });
 
         it('should fail if no job found', function (done) {
             scheduler.splitJob(new ObjectId())
-            .then(fail)
-            .fail(done)
+            .fail(function () { done(); })
             .done();
         });
 
@@ -137,14 +142,14 @@ describe('Scheduler', function () {
             var job = new Job({
                 status : "prepared",
                 data   : { a : 0, b : 10 },
-                job_type : "testowy"
+                type : "testowy"
             });
 
             job.saveQ()
             .then(function (job) {
                 return scheduler.splitJob(job.id);
             }, fail)
-            .then(function () { throw new Error(); })
+            .then(fail)
             .fail(function () { done(); })
             .done();
         });
@@ -153,7 +158,7 @@ describe('Scheduler', function () {
             var job = new Job({
                 status : "new",
                 data   : { a : 0, b : 10 },
-                job_type : "bad"
+                type : "bad"
             });
 
             job.saveQ()
@@ -161,7 +166,7 @@ describe('Scheduler', function () {
                 return scheduler.splitJob(job.id);
             })
             .then(fail)
-            .fail(done)
+            .fail(function () { done(); })
             .done();
         });
     });
@@ -238,6 +243,92 @@ describe('Scheduler', function () {
             })
             .then(fail)
             .fail(done)
+            .done();
+        });
+    });
+
+    describe('#removeJob', function () {
+        it('should remove new job', function (done) {
+            var job = new Job({
+                status : "new"
+            });
+
+            job.saveQ()
+            .then(function (job) {
+                return scheduler.removeJob(job.id);
+            })
+            .then(function () {
+                return Job.findByIdQ(job.id);
+            })
+            .then(function (job) {
+                job.should.equal(null);
+                done();
+            })
+            .fail(fail)
+            .done();
+        });
+
+        it('should fail if job not found', function (done) {
+            scheduler.removeJob(new ObjectId())
+            .then(fail)
+            .fail(done)
+            .done();
+        });
+
+        it('should remove split tasks', function (done) {
+            var job = new Job({
+                    status : "prepared"
+                }),
+                task = new Task({
+                    job : job.id
+                });
+
+            job.saveQ()
+            .then(function () {
+                return task.saveQ();
+            })
+            .then(function () {
+                return scheduler.removeJob(job.id);
+            })
+            .then(function () {
+                return Task.findByIdQ(task.id);
+            })
+            .then(function (task) {
+                task.should.equal(null);
+                done();
+            })
+            .fail(fail)
+            .done();
+        });
+
+        it('should cancel executing tasks', function (done) {
+            var job = new Job({
+                    status : "executing"
+                }),
+                task = new Task({
+                    job    : job.id,
+                    status : "executing"
+                }),
+                dequeueCalled = 0;
+
+            slaveManager.dequeue = function (tasks) {
+                tasks.length.should.equal(1);
+                tasks[0].should.eql(task);
+                dequeueCalled++;
+            };
+
+            job.saveQ()
+            .then(function () {
+                return task.saveQ();
+            })
+            .then(function () {
+                return scheduler.removeJob(job.id);
+            })
+            .then(function () {
+                dequeueCalled.should.equal(1);
+                done();
+            })
+            .fail(fail)
             .done();
         });
     });
