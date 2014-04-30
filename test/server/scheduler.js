@@ -227,7 +227,6 @@ describe('Scheduler', function () {
                 job.result.should.equal(42);
                 done();
             })
-            .fail(fail)
             .done();
         });
 
@@ -242,7 +241,7 @@ describe('Scheduler', function () {
                 return scheduler.enqueueJob(job.id);
             })
             .then(fail)
-            .fail(done)
+            .fail(function () { done(); })
             .done();
         });
     });
@@ -264,14 +263,13 @@ describe('Scheduler', function () {
                 job.should.equal(null);
                 done();
             })
-            .fail(fail)
             .done();
         });
 
         it('should fail if job not found', function (done) {
             scheduler.removeJob(new ObjectId())
             .then(fail)
-            .fail(done)
+            .fail(function () { done(); })
             .done();
         });
 
@@ -297,7 +295,6 @@ describe('Scheduler', function () {
                 task.should.equal(null);
                 done();
             })
-            .fail(fail)
             .done();
         });
 
@@ -328,7 +325,6 @@ describe('Scheduler', function () {
                 dequeueCalled.should.equal(1);
                 done();
             })
-            .fail(fail)
             .done();
         });
     });
