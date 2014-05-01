@@ -1,6 +1,7 @@
 'use strict';
 
 var _         = require('lodash'),
+    should    = require('should'),
     Q         = require('q'),
     mongoose  = require('mongoose-q')(require('mongoose')),
     ObjectId  = mongoose.Types.ObjectId,
@@ -274,7 +275,7 @@ describe('Scheduler', function () {
                 return Job.findByIdQ(job.id);
             })
             .then(function (job) {
-                job.should.equal(null);
+                should.not.exist(job);
                 done();
             })
             .done();
@@ -306,7 +307,7 @@ describe('Scheduler', function () {
                 return Task.findByIdQ(task.id);
             })
             .then(function (task) {
-                task.should.equal(null);
+                should.not.exist(task);
                 done();
             })
             .done();
@@ -324,7 +325,7 @@ describe('Scheduler', function () {
 
             slaveManager.dequeue = function (tasks) {
                 tasks.length.should.equal(1);
-                tasks[0].should.eql(task);
+                tasks[0].should.eql(task.id);
                 dequeueCalled++;
             };
 
