@@ -8,6 +8,8 @@ var _         = require('lodash'),
     Job       = require('../../lib/models/job'),
     Task      = require('../../lib/models/task');
 
+Q.longStackSupport = true;
+
 describe('Scheduler', function () {
     var scheduler,
         slaveManager,
@@ -25,10 +27,10 @@ describe('Scheduler', function () {
 
                     return s + i;
                 },
-                reducer : function (results) {
-                    return _.reduce(results, function (memo, num) {
-                        return memo + num;
-                    });
+                reducer : function (tasks) {
+                    return _.reduce(tasks, function (memo, task) {
+                        return memo + task.partial_result;
+                    }, 0);
                 },
                 splitter : function (data) {
                     var b = Math.floor((data.a + data.b)/2),
@@ -172,31 +174,36 @@ describe('Scheduler', function () {
     });
 
     describe('#enqueueJob', function () {
-        it('should call #enqueueTasks and #reduceTasks after completion', function (done) {
+        it('should call enqueue and resolve to reduced value after completion', function (done) {
             var enqueueCount = 0;
 
             slaveManager.enqueue = function (tasks) {
                 tasks.length.should.equal(2);
+                tasks[0].should.not.have.property("save");
                 enqueueCount++;
                 var deferred = Q.defer();
                 Job.findByIdQ(job.id)
                 .then(function (job) {
                     job.status.should.eql('executing');
-                    deferred.resolve();
+                    deferred.resolve([{
+                        status : "completed",
+                        partial_result : 10,
+                        id : task1.id
+                    },{
+                        status : "completed",
+                        partial_result : 32,
+                        id : task2.id
+                    }]);
                 })
                 .fail(fail)
                 .done();
                 return deferred.promise;
             };
 
-            scheduler.reduceTasks = function () {
-                return 42;
-            };
-
             var job = new Job({
                     data : {},
                     status : "prepared",
-                    job_type : "testowy"
+                    type : "testowy"
                 }),
                 task1 = new Task({
                     status : "new",
@@ -211,10 +218,10 @@ describe('Scheduler', function () {
             .then(function () {
                 return task1.saveQ();
             })
-            .then(function () {
+            .then(function (_task1) {
                 return task2.saveQ();
             })
-            .then(function () {
+            .then(function (_task2) {
                 return scheduler.enqueueJob(job.id);
             })
             .then(function (results) {
@@ -240,6 +247,13 @@ describe('Scheduler', function () {
             .then(function () {
                 return scheduler.enqueueJob(job.id);
             })
+            .then(fail)
+            .fail(function () { done(); })
+            .done();
+        });
+
+        it('should fail if job not found', function (done) {
+            scheduler.enqueueJob(new ObjectId())
             .then(fail)
             .fail(function () { done(); })
             .done();
