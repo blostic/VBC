@@ -175,30 +175,25 @@ describe('Scheduler', function () {
     });
 
     describe('#enqueueJob', function () {
-        it('should call enqueue and resolve to reduced value after completion', function (done) {
-            var enqueueCount = 0;
+        it('should call enqueue and return its promise by promise', function (done) {
+            var trackProgressCalled = 0,
+                enqueueReturn = {},
+                trackProgressPromise = {};
 
             slaveManager.enqueue = function (tasks) {
                 tasks.length.should.equal(2);
                 tasks[0].should.not.have.property("save");
-                enqueueCount++;
-                var deferred = Q.defer();
-                Job.findByIdQ(job.id)
-                .then(function (job) {
-                    job.status.should.eql('executing');
-                    deferred.resolve([{
-                        status : "completed",
-                        partial_result : 10,
-                        id : task1.id
-                    },{
-                        status : "completed",
-                        partial_result : 32,
-                        id : task2.id
-                    }]);
-                })
-                .fail(fail)
-                .done();
-                return deferred.promise;
+                return enqueueReturn;
+            };
+
+            scheduler.trackProgress = function (jobId, promise) {
+                trackProgressCalled++;
+
+                jobId.should.eql(job.id);
+
+                promise.should.equal(enqueueReturn);
+
+                return trackProgressPromise;
             };
 
             var job = new Job({
@@ -219,20 +214,22 @@ describe('Scheduler', function () {
             .then(function () {
                 return task1.saveQ();
             })
-            .then(function (_task1) {
+            .then(function () {
                 return task2.saveQ();
             })
-            .then(function (_task2) {
+            .then(function () {
                 return scheduler.enqueueJob(job.id);
             })
-            .then(function (results) {
-                results.should.equal(42);
-                enqueueCount.should.equal(1);
+            .then(function (resultPromise) {
+                resultPromise.should.equal(trackProgressPromise);
+
                 return Job.findByIdQ(job.id);
             })
             .then(function (job) {
-                job.status.should.eql('completed');
-                job.result.should.equal(42);
+                trackProgressCalled.should.equal(1);
+
+                job.status.should.equal("executing");
+
                 done();
             })
             .done();
@@ -241,7 +238,7 @@ describe('Scheduler', function () {
         it('should fail if invalid status', function (done) {
             var job = new Job({
                 status : "executing",
-                job_type : "testowy"
+                type : "testowy"
             });
 
             job.saveQ()
@@ -257,6 +254,85 @@ describe('Scheduler', function () {
             scheduler.enqueueJob(new ObjectId())
             .then(fail)
             .fail(function () { done(); })
+            .done();
+        });
+    });
+
+    describe('#trackProgress', function () {
+        it('should update task status', function (done) {
+            var deferred = Q.defer(),
+                jobId = new ObjectId();
+
+            var task1 = new Task({
+                    status : "executing",
+                    job    : jobId
+                }),
+                task2 = new Task({
+                    status : "executing",
+                    job    : jobId
+                });
+
+            Q.all([task1.saveQ(), task2.saveQ()])
+            .then(function () {
+                var promise = scheduler.trackProgress(jobId, deferred.promise);
+
+                promise.should.have.property('then');
+                promise.should.have.property('fail');
+
+                task1.status = "completed";
+                task1.partial_result = 42;
+
+                deferred.notify([task1]);
+
+                _.delay(function () {
+                    Task.findByIdQ(task1.id)
+                    .then(function (task) {
+                        task.status.should.equal(task1.status);
+                        task.partial_result.should.equal(task1.partial_result);
+                        done();
+                    })
+                    .done();
+                }, 50);
+            })
+            .done();
+        });
+
+        it('should resolve after completion of all', function (done) {
+            var job = new Job({
+                    status : "executing",
+                    type   : "testowy"
+                }),
+                task = new Task({
+                    status : "executing",
+                    job    : job.id
+                }),
+                deferred = Q.defer();
+
+            Q.all([job.saveQ(), task.saveQ()])
+            .then(function () {
+
+                scheduler.trackProgress(job.id, deferred.promise)
+                .then(function (result) {
+                    result.should.equal(42);
+
+                    return Q.all([Job.findByIdQ(job.id), Task.findByIdQ(task.id)]);
+                })
+                .spread(function (job, task) {
+                    job.status.should.equal("completed");
+                    job.result.should.equal(42);
+
+                    task.status.should.equal("completed");
+                    task.partial_result.should.equal(42);
+
+                    done();
+                })
+                .done();
+
+                task.status = "completed";
+                task.partial_result = 42;
+
+                deferred.resolve([task]);
+            })
             .done();
         });
     });
