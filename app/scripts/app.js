@@ -21,6 +21,11 @@ angular.module('vcApp', [
             .state('public.404', {
                 url: '/404/',
                 templateUrl: '/partials/404'
+            })
+            .state('public.slave', {
+                url: '/slave/',
+                templateUrl: '/partials/slave_main',
+                controller: 'SlaveCtrl'
             });
 
         // Anonymous routes
