@@ -9,6 +9,7 @@ angular.module('vcApp')
                 var res = {};
                 res.result = func(data);
                 return res;
+
             }
         };
     });
