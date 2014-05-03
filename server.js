@@ -3,7 +3,7 @@
 var express = require('express'),
     path = require('path'),
     fs = require('fs'),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose-q')(require('mongoose'));
 
 /**
  * Main application file

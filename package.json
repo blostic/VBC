@@ -9,7 +9,9 @@
     "passport": "~0.2.0",
     "passport-local": "~0.1.6",
     "jade": "~1.2.0",
-    "underscore": "~1.5.2"
+    "underscore": "~1.5.2",
+    "mongoose-q": "0.0.10",
+    "q": "^1.0.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
