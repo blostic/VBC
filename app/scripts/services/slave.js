@@ -7,9 +7,9 @@ angular.module('vcApp')
                 var func = eval('(' + task.function + ')');
                 var data = eval(task.data);
                 var res = {};
+                res.id = task.id;
                 res.result = func(data);
                 return res;
-
             }
         };
     });
