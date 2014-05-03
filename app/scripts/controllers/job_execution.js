@@ -5,9 +5,7 @@ angular.module('vcApp')
         $scope.test = "test text";
         $(document).ready(function() {
             if(!("WebSocket" in window)){
-                $('#chatLog, input, button, #examples').fadeOut("fast");
-                $('<p>Oh no, you need a browser that supports WebSockets. ' +
-                    'How about <a href="http://www.google.com/chrome">Google Chrome</a>?</p>').appendTo('#container');
+                    alert("Update your browser");
             }else {
                 var socket = io.connect('http://localhost:44444');
                 socket.on('new-task', function (data) {
