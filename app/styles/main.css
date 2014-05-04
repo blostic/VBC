@@ -2,25 +2,24 @@
     display: none;
 }
 body {
-    padding-top: 70px;
+    padding-top: 10px;
 }
-#cover {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    background: white;
+#vc-nav{
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
 }
-#userInfo {
+.container {
+    max-width: 900px;
+}
+
+.panel-heading a:after {
+    font-family: 'Glyphicons Halflings';
+    content: "\e114";
     float: right;
-    padding: 8px;
+    color: grey;
 }
-#vc-navbar {
-    padding-right: 2%;
+.panel-heading a.collapsed:after {
+    content: "\e080";
 }
-#alertBox {
-    position: fixed;
-    min-width: 75%;
-    left: 50%;
-    margin: 0 0 0 -37.5%;
-    top: 80px;
-}
+

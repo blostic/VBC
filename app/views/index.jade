@@ -9,7 +9,8 @@ html.no-js
     meta(name="viewport", content="width=device-width")
     // build:css(app) styles/vendor.css
     // bower:css
-    link(rel='stylesheet', href='bower_components/bootstrap/dist/css/bootstrap.css')
+    link(rel='stylesheet', href='bower_components/bootstrap/dist/css/bootstrap.min.css')
+    link(rel='stylesheet', href='bower_components/bootstrap/dist/css/bootstrap-theme.min.css')
     // endbower
     // endbuild
     // build:css({.tmp,app}) styles/main.css
@@ -19,12 +20,12 @@ html.no-js
     // endbuild
 
   body(ng-app="vcApp")
-    div(ng-include='\'partials/navbar\'')
-    .container(data-ui-view)
+    .container
+        div(ng-include='\'partials/navbar\'')
+        div.container(data-ui-view)
     // build:js(app) scripts/vendor.js
     script(src='bower_components/jquery/dist/jquery.js')
     script(src='bower_components/angular/angular.js')
-    script(src='bower_components/highlight/src/highlight.js')
     script(src='bower_components/bootstrap/dist/js/bootstrap.js')
     script(src='bower_components/angular-resource/angular-resource.js')
     script(src='bower_components/angular-cookies/angular-cookies.js')
@@ -42,10 +43,7 @@ html.no-js
     script(src='scripts/controllers/settings.js')
     script(src='scripts/controllers/addjob.js')
     script(src='scripts/services/auth.js')
-    script(src='scripts/services/session.js')
-    script(src='scripts/services/user.js')
     script(src='scripts/services/addJob.js')
-    script(src='scripts/directives/mongooseError.js')
     script(src='scripts/directives/activeNav.js')
     script(src='scripts/directives/accessLevel.js')
     // endbuild

@@ -1,32 +1,45 @@
-h1 Client {{user.username}} has created following Jobs
-    br
-    br
-    lp(ng-repeat="job in jobs")
-        #test
-            #leftBox
-                dd
-                    h4
-                        b creation date: {{ job.creation_date }}
-                dd
-                    h4
-                        b status: {{job.status}}
-                dd
-                    h4
-                        b finished: [{{job.finished}} / {{job.allTasks}}]
-                dd
-                    h4
-                        b result: {{job.result}}
-                dd
-                    h4
-                        b data for job: {{job.data}}
-            #rightBox
-                #mar
-                .box.effect7
-                       h4
-                         #mar
-                            b code:
-                            <br>
-                            {{job.code}}
-                br
-        br
+h1 Your jobs
+.panel-group
+
+    div.panel.panel-info(ng-repeat='job in jobs', class='{{job}}')
+        div.panel-heading
+            h4.panel-title
+                a(data-toggle='collapse', data-target='#{{job._id}}')
+                    | {{job.status}} {{job.type}}
+        .panel-collapse.collapse.in(id='{{job._id}}')
+            div.panel-body.container
+                .row
+                    p.col-md-3
+                        strong Creation Date:
+                    p.col-md-9 {{job.creation_date | date:'medium'}}
+                .row
+                    p.col-md-3
+                        strong Status:
+                    p.col-md-9 {{job.status}}
+                .row
+                .row
+                    p.col-md-3
+                        strong Arguments range:
+                    p.col-md-9  from {{job.data[0]}} to {{job.data[1]}}
+                .row(ng-show='job.status != "new"')
+                    p.col-md-3
+                        strong Progress:
+                    .col-sm-4.col-md-4
+                        .progress
+                            div.progress-bar(role='progressbar', aria-valuenow='{{job.finished}}', aria-valuemin='0', aria-valuemax='{{job.allTasks}}', style='width: 50%')
+                                | {{job.finished}} / {{job.allTasks}}
+                .row(ng-show='job.status == "new"')
+                    div.col-md-3(style='padding-top: 7px')
+                        strong Run:
+                    .col-sm-4.col-md-3
+                        form(name='form', role='form', ng-submit='startJob(job)')
+                            .input-group
+                                input.form-control(type='number',name='tasksCount', ng-model='job.tasksCount', placeholder='Number of tasks')
+                                span.input-group-btn
+                                    button.btn.btn-default(type='submit') Start
+                            p.label.label-danger(ng-show='job.errors')
+                                | {{job.errors.message}}
+
+
+
 
