@@ -4,14 +4,17 @@ angular.module('vcApp')
     .controller('AddJobCtrl', function($rootScope, $scope, AddJob, $location) {
         $scope.functions = ['sum', 'count-primary'];
         $scope.selectedFunction = undefined;
-        $scope.beginning = 3;
-        $scope.ending = 0;
+        $scope.start = 0;
+        $scope.stop = 10;
 
-        $scope.addJob = function() {
-            $scope.data = [$scope.beginning, $scope.ending];
+        $scope.addJob = function(form) {
+            $scope.data = {
+                start: $scope.start,
+                stop: $scope.stop
+            };
             console.log($scope.data);
             AddJob.addJob({
-                job: $scope.selectedFunction,
+                type: $scope.selectedFunction,
                 data: $scope.data
             },
             function(/*res*/) {

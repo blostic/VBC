@@ -20,14 +20,12 @@ h1 Your jobs
                 .row
                     p.col-md-3
                         strong Arguments range:
-                    p.col-md-9  from {{job.data[0]}} to {{job.data[1]}}
+                    p.col-md-9  {{job.data.start}} - {{job.data.stop}}
                 .row(ng-show='job.status != "new"')
-                    p.col-md-3
+                    div.col-md-3(style='padding-top: 7px')
                         strong Progress:
                     .col-sm-4.col-md-4
-                        .progress
-                            div.progress-bar(role='progressbar', aria-valuenow='{{job.finished}}', aria-valuemin='0', aria-valuemax='{{job.allTasks}}', style='width: 50%')
-                                | {{job.finished}} / {{job.allTasks}}
+                        button.btn.btn-primary(type='submit', ng-click='updateProgress(job)') {{job.progress}}
                 .row(ng-show='job.status == "new"')
                     div.col-md-3(style='padding-top: 7px')
                         strong Run:

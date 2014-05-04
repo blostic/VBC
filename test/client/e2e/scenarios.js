@@ -31,8 +31,8 @@ describe('UI: Add Job page', function() {
 
         select("selectedFunction").option("sum");
 
-        expect(element('input[name=beginning]:visible', 'args range').count()).toBe(1);
-        expect(element('input[name=ending]:visible', 'args range').count()).toBe(1);
+        expect(element('input[name=start]:visible', 'args range').count()).toBe(1);
+        expect(element('input[name=stop]:visible', 'args range').count()).toBe(1);
         expect(element('button[type=submit]:visible', 'submit button').count()).toBe(1);
         expect(element('p.label-danger:visible', 'error message').count()).toBe(0);
     });
@@ -53,7 +53,7 @@ describe('UI: Add Job page', function() {
         login();
         browser().navigateTo('/newjob/');
         select("selectedFunction").option("sum");
-        input('beginning').enter(1);
+        input('start').enter(1);
         element('button[type=submit]', 'submit button').click();
 
         expect(browser().location().url()).toBe('/jobs/');

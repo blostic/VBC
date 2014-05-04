@@ -7,17 +7,7 @@ angular.module('vcApp')
             Auth.showJobs(function(res) {
                 var jobs = res.jobs;
                 for (var job in jobs) {
-                    var finished = 0;
-                    var allTasks = 0;
-                    var tasks = jobs[job].tasks;
-                    for (var task in tasks) {
-                        if (tasks[task].status == "finished") {
-                            finished++;
-                        }
-                        allTasks++;
-                    }
-                    jobs[job].allTasks = allTasks;
-                    jobs[job].finished = finished;
+                    jobs[job].progress = "Check";
                 }
                 $scope.jobs = jobs;
 
@@ -25,13 +15,35 @@ angular.module('vcApp')
                 $scope.errors = { message: err };
             });
         };
+        $scope.updateProgress = function (job){
+            AddJob.getJobInfo({
+                    job_id: job.id
+                },
+                function(_job) {
+                   job.progress = _job.finishedTasks + "/" + _job.totalTasks;
+                   job.status = _job.status;
+                },
+                function(err) {
+                    console.log(err);
+                    job.errors = { message: err };
+                });
+        };
         $scope.startJob = function(job) {
             console.log($scope.tasksCount);
-            AddJob.startJob({
-                    job: job
+            AddJob.splitJob({
+                    job_id: job.id
                 },
                 function(res) {
-                    $scope.updateJobs();
+                    AddJob.startJob({
+                            job_id: job.id
+                        },
+                        function(res) {
+                            $scope.updateJobs();
+                        },
+                        function(err) {
+                            console.log(err);
+                            job.errors = { message: err };
+                        });
                 },
                 function(err) {
                     console.log(err);
