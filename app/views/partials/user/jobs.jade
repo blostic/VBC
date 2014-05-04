@@ -4,9 +4,9 @@ h1 Your jobs
     div.panel.panel-info(ng-repeat='job in jobs', class='{{job}}')
         div.panel-heading
             h4.panel-title
-                a(data-toggle='collapse', data-target='#{{job._id}}')
+                a(data-toggle='collapse', data-target='#{{job.id}}')
                     | {{job.status}} {{job.type}}
-        .panel-collapse.collapse.in(id='{{job._id}}')
+        .panel-collapse.collapse(id='{{job.id}}')
             div.panel-body.container
                 .row
                     p.col-md-3
