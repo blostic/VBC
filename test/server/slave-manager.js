@@ -222,7 +222,7 @@ describe('SlaveManager', function() {
     });
 
     it('should try to recover when a busy slave disconnects', function(done) {
-        var manager = new SlaveManager(9007, true);
+        var manager = new SlaveManager(9007);
         var socket = io.connect('http://localhost:9007',
                                 { 'force new connection': 1 });
         socket.on('task_request', function(msg) {
