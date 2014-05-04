@@ -45,7 +45,7 @@ describe('SlaveManager', function() {
         var socket = io.connect('http://localhost:9003');
 
         var task = {
-            id: 'testTaskId',
+            _id: 'testTaskId',
             status: 'new',
             data: 'testData',
             partial_result: null,
@@ -54,7 +54,7 @@ describe('SlaveManager', function() {
         };
 
         socket.on('task_request', function(msg) {
-            msg.task_id.should.eql(task.id),
+            msg.task_id.should.eql(task._id),
             msg.code.should.eql(task.code);
             msg.data.should.eql(task.data);
 
@@ -102,7 +102,7 @@ describe('SlaveManager', function() {
         var tasks = [];
         for (var i = 0; i < NUM_TASKS; ++i) {
             tasks.push({
-                id: i,
+                _id: i,
                 status: 'new',
                 data: 'testData' + i,
                 partial_result: null,
@@ -131,7 +131,7 @@ describe('SlaveManager', function() {
 
         pkgPromise
             .progress(function(task) {
-                task.partial_result.should.eql(100 + task.id);
+                task.partial_result.should.eql(100 + task._id);
                 progress++;
             })
             .then(function(tasks) {
@@ -161,7 +161,7 @@ describe('SlaveManager', function() {
         var tasks = [];
         for (var i = 0; i < NUM_TASKS; ++i) {
             tasks.push({
-                id: i,
+                _id: i,
                 status: 'new',
                 data: 'testData' + i,
                 partial_result: null,
@@ -183,7 +183,7 @@ describe('SlaveManager', function() {
 
         manager.enqueue(tasks);
 
-        var taskIds = _.map(tasks, function(task) { return task.id });
+        var taskIds = _.map(tasks, function(task) { return task._id });
         var taskPromise = manager.dequeue(taskIds);
 
         taskPromise
@@ -191,7 +191,7 @@ describe('SlaveManager', function() {
                 result.length.should.eql(NUM_TASKS);
 
                 _.forEach(result, function(_task) {
-                    _task.id.should.be.within(0,  NUM_TASKS - 1);
+                    _task._id.should.be.within(0,  NUM_TASKS - 1);
                     _task.status.should.eql('finished');
                     _task.partial_result.should.be.within(42, 42 + NUM_TASKS - 1);
                 });
@@ -230,7 +230,7 @@ describe('SlaveManager', function() {
         });
 
         var task = {
-            id: 'testTaskId',
+            _id: 'testTaskId',
             status: 'new',
             data: 'testData',
             partial_result: null,
@@ -245,7 +245,7 @@ describe('SlaveManager', function() {
                                    { 'force new connection': 1 });
 
         newSocket.on('task_request', function(msg) {
-            msg.task_id.should.eql(task.id),
+            msg.task_id.should.eql(task._id),
             msg.code.should.eql(task.code);
             msg.data.should.eql(task.data);
 
