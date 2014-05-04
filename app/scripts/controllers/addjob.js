@@ -2,26 +2,24 @@
 
 angular.module('vcApp')
     .controller('AddJobCtrl', function($rootScope, $scope, AddJob, $location) {
-        $scope.addJob = function(form) {
-            var isArray = false;
-            try {
-                isArray = $.isArray(JSON.parse($scope.data));
-            } catch (e) {}
+        $scope.functions = ['sum', 'count-primary'];
+        $scope.selectedFunction = undefined;
+        $scope.beginning = 3;
+        $scope.ending = 0;
 
-            if (isArray) {
-                AddJob.addJob({
-                    job: 0,
-                    data: $scope.data
-                },
-                function(/*res*/) {
-                    // TODO: check HTTP code?
-                    $location.path('/jobs');
-                },
-                function(err) {
-                    $scope.errors = { message: err };
-                });
-            } else {
-                $scope.errors = { message: 'The data must be a valid JSON array!' };
-            }
+        $scope.addJob = function() {
+            $scope.data = [$scope.beginning, $scope.ending];
+            console.log($scope.data);
+            AddJob.addJob({
+                job: $scope.selectedFunction,
+                data: $scope.data
+            },
+            function(/*res*/) {
+                $location.path('/jobs');
+            },
+            function(err) {
+                console.log(err);
+                $scope.errors = { message: err };
+            });
         };
     });

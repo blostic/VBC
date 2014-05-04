@@ -54,7 +54,7 @@ angular.module('vcApp')
                 }).error(error);
             },
 
-            show_jobs: function( success, error) {
+            showJobs: function( success, error) {
                 $http.get('/api/showJobs').success(success).error(error);
             },
 
