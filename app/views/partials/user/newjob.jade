@@ -1,16 +1,28 @@
 h1 Add a new job
-br
-br
-form.form(name='form', ng-submit='addJob(form)')
+form.form-horizontal(name='form', role='form', ng-submit='addJob(form)')
     .form-group
-        .row
-            label Input data (range as JSON array, e.g. [4,14])
-        .row
-            textarea.job-data(name='data', ng-model='data')
-    .row
-        button.btn.btn-lg.btn-primary(type='submit') Add job
-        .div
-        p.label.label-danger(ng-show='errors')
-            | {{errors.message}}
-        span.clearfix
+        ol
+            li
+                h4 Select function
+                select(ng-model='selectedFunction')
+                    option(ng-repeat='function in functions') {{function}}
+                p(ng-show='selectedFunction') Description of selected function
+            li(ng-show='selectedFunction')
+                h4 Enter arguments
+                p Interval:
+                .form-group
+                    label.col-sm-2.control-label Beginning:
+                    .col-sm-2
+                        input.form-control(type='number', name='start', ng-model='start', required)
+                .form-group
+                    label.col-sm-2.control-label Ending:
+                    .col-sm-2
+                        input.form-control(type='number', name='stop', ng-model='stop', required)
+
+
+                button.btn.btn-lg.btn-primary(type='submit') Add job
+                .div
+                p.label.label-danger(ng-show='errors')
+                    | {{errors.message}}
+                span.clearfix
 

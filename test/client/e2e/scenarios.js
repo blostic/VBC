@@ -29,16 +29,19 @@ describe('UI: Add Job page', function() {
         login();
         browser().navigateTo('/newjob/');
 
-        expect(element('textarea[name=data]:visible', 'data input field').count()).toBe(1);
+        select("selectedFunction").option("sum");
+
+        expect(element('input[name=start]:visible', 'args range').count()).toBe(1);
+        expect(element('input[name=stop]:visible', 'args range').count()).toBe(1);
         expect(element('button[type=submit]:visible', 'submit button').count()).toBe(1);
         expect(element('p.label-danger:visible', 'error message').count()).toBe(0);
     });
 
-    it('should display error message when user attepmts to add a job with invalid input', function() {
+    xit('should display error message when user attepmts to add a job with invalid input', function() {
         login();
         browser().navigateTo('/newjob/');
-
-        input('data').enter('');
+        select("selectedFunction").option("sum");
+        input('beginning').enter('');
         element('button[type=submit]', 'submit button').click();
 
         expect(browser().location().url()).toBe('/newjob/');
@@ -49,8 +52,8 @@ describe('UI: Add Job page', function() {
     it('should redirect to /jobs/ when the job is added', function() {
         login();
         browser().navigateTo('/newjob/');
-
-        input('data').enter('[1, 2]');
+        select("selectedFunction").option("sum");
+        input('start').enter(1);
         element('button[type=submit]', 'submit button').click();
 
         expect(browser().location().url()).toBe('/jobs/');
