@@ -53,13 +53,13 @@ describe('SlaveManager', function() {
             job: 'testJob'
         };
 
-        socket.on('task', function(_task) {
-            _task.id.should.eql(task.id),
-            _task.task.should.eql(task.code);
-            _task.data.should.eql(task.data);
+        socket.on('task_request', function(msg) {
+            msg.task_id.should.eql(task.id),
+            msg.code.should.eql(task.code);
+            msg.data.should.eql(task.data);
 
-            socket.emit('task_completed', {
-                taskId: _task.id,
+            socket.emit('task_reply', {
+                task_id: msg.task_id,
                 result: 42
             });
         });
@@ -112,14 +112,14 @@ describe('SlaveManager', function() {
         }
 
         _.forEach(sockets, function(socket) {
-            socket.on('task', function(msg) {
-                msg.id.should.be.within(0, NUM_TASKS - 1);
-                msg.task.should.eql(tasks[msg.id].code);
-                msg.data.should.eql(tasks[msg.id].data);
+            socket.on('task_request', function(msg) {
+                msg.task_id.should.be.within(0, NUM_TASKS - 1);
+                msg.code.should.eql(tasks[msg.task_id].code);
+                msg.data.should.eql(tasks[msg.task_id].data);
 
-                socket.emit('task_completed', {
-                    taskId: msg.id,
-                    result: 100 + msg.id
+                socket.emit('task_reply', {
+                    task_id: msg.task_id,
+                    result: 100 + msg.task_id
                 });
 
                 socket.tasksCompleted++;
@@ -170,14 +170,14 @@ describe('SlaveManager', function() {
             });
         }
 
-        socket.on('task', function(_task) {
-            _task.id.should.be.within(0, NUM_TASKS - 1),
-            _task.task.should.eql(tasks[_task.id].code);
-            _task.data.should.eql(tasks[_task.id].data);
+        socket.on('task_request', function(msg) {
+            msg.task_id.should.be.within(0, NUM_TASKS - 1),
+            msg.code.should.eql(tasks[msg.task_id].code);
+            msg.data.should.eql(tasks[msg.task_id].data);
 
-            socket.emit('task_completed', {
-                taskId: _task.id,
-                result: 42 + _task.id
+            socket.emit('task_reply', {
+                task_id: msg.task_id,
+                result: 42 + msg.task_id
             });
         });
 
