@@ -29,9 +29,10 @@ angular.module('vcApp')
                 });
         };
         $scope.startJob = function(job) {
-            console.log($scope.tasksCount);
+            console.log(job.tasksCount);
             AddJob.splitJob({
-                    job_id: job.id
+                    job_id: job.id,
+                    count: job.tasksCount
                 },
                 function(res) {
                     AddJob.startJob({
