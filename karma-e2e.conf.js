@@ -18,6 +18,7 @@ module.exports = function(config) {
             'app/bower_components/angular-sanitize/angular-sanitize.js',
             'app/bower_components/angular-route/angular-route.js',
             'app/bower_components/jquery/dist/jquery.js',
+            'app/bower_components/angular-socket-io/socket.min.js',
             'app/scripts/*.js',
             'app/scripts/**/*.js',
             'test/client/e2e/**/*.js'

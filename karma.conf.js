@@ -18,6 +18,7 @@ module.exports = function(config) {
             'app/bower_components/angular-sanitize/angular-sanitize.js',
             'app/bower_components/angular-route/angular-route.js',
             'app/bower_components/angular-ui-router/release/angular-ui-router.js',
+            'web-content/task_executor.js',
             'app/scripts/*.js',
             'app/scripts/**/*.js',
             'test/client/unit/**/*.js',

@@ -1,21 +1,17 @@
 'use strict';
 
 describe('Client side task execution', function(){
-    var Slave;
+
     beforeEach(
         module('vcApp')
     );
-
-    beforeEach(inject(function(_Slave_) {
-        Slave = _Slave_;
-    }));
 
     it('should return 5^2', function(){
         var square_function = function (data) {
             return data.a*data.a;
         };
         var inputData = {"task_id":1, "code": square_function.toString(), "data":{"a":5}};
-        var result = Slave.execute_task(inputData);
+        var result = execute_task(inputData);
         var shouldBe = {"result":25};
         shouldBe.task_id = 1;
         expect(result).toEqual(shouldBe);
@@ -28,7 +24,7 @@ describe('Client side task execution', function(){
             return data.a*data.b;
         };
         var inputData = {"task_id":1, "code": multiplication.toString(), data: {"a":5, "b":2}};
-        var result = Slave.execute_task(inputData);
+        var result = execute_task(inputData);
         var shouldBe = {"result":10};
         shouldBe.task_id = 1;
         expect(result).toEqual(shouldBe);
