@@ -401,7 +401,7 @@ describe('Scheduler', function () {
 
             slaveManager.dequeue = function (tasks) {
                 tasks.length.should.equal(1);
-                tasks[0].should.eql(task.id);
+                tasks[0].toString().should.eql(task.id);
                 dequeueCalled++;
             };
 
