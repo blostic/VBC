@@ -30,6 +30,7 @@ html.no-js
     script(src='bower_components/angular-cookies/angular-cookies.js')
     script(src='bower_components/angular-sanitize/angular-sanitize.js')
     script(src='bower_components/angular-ui-router/release/angular-ui-router.js')
+    script(src='bower_components/socket.io-client/dist/socket.io.min.js')
     // endbower
     // build:js({.tmp,app}) scripts/scripts.js
     script(src='scripts/routingConfig.js')
@@ -41,7 +42,9 @@ html.no-js
     script(src='scripts/controllers/jobs.js')
     script(src='scripts/controllers/settings.js')
     script(src='scripts/controllers/addjob.js')
+    script(src='scripts/controllers/job_execution.js')
     script(src='scripts/services/auth.js')
+    script(src='scripts/services/slave.js')
     script(src='scripts/services/session.js')
     script(src='scripts/services/user.js')
     script(src='scripts/services/addJob.js')
