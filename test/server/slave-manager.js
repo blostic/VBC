@@ -46,7 +46,7 @@ describe('SlaveManager', function() {
 
         var task = {
             id: 'testTaskId',
-            status: 'testStatus',
+            status: 'new',
             data: 'testData',
             partial_result: null,
             code: 'testCode',
@@ -103,7 +103,7 @@ describe('SlaveManager', function() {
         for (var i = 0; i < NUM_TASKS; ++i) {
             tasks.push({
                 id: i,
-                status: 'testStatus',
+                status: 'new',
                 data: 'testData' + i,
                 partial_result: null,
                 code: 'testCode' + i,
@@ -149,5 +149,75 @@ describe('SlaveManager', function() {
             .fail(function() {
                 throw new Error('task promise from SlaveManager failed');
             });
+    });
+
+    it('should resolve a promise returned by dequeue() when all tasks are '
+       + 'completed', function(done) {
+        var NUM_TASKS = 9;
+
+        var manager = new SlaveManager(9005);
+        var socket = io.connect('http://localhost:9005');
+
+        var tasks = [];
+        for (var i = 0; i < NUM_TASKS; ++i) {
+            tasks.push({
+                id: i,
+                status: 'new',
+                data: 'testData' + i,
+                partial_result: null,
+                code: 'testCode' + i,
+                job: 'testJob'
+            });
+        }
+
+        socket.on('task', function(_task) {
+            _task.id.should.be.within(0, NUM_TASKS - 1),
+            _task.task.should.eql(tasks[_task.id].code);
+            _task.data.should.eql(tasks[_task.id].data);
+
+            socket.emit('task_completed', {
+                taskId: _task.id,
+                result: 42 + _task.id
+            });
+        });
+
+        manager.enqueue(tasks);
+
+        var taskIds = _.map(tasks, function(task) { return task.id });
+        var taskPromise = manager.dequeue(taskIds);
+
+        taskPromise
+            .then(function(result) {
+                result.length.should.eql(NUM_TASKS);
+
+                _.forEach(result, function(_task) {
+                    _task.id.should.be.within(0,  NUM_TASKS - 1);
+                    _task.status.should.eql('finished');
+                    _task.partial_result.should.be.within(42, 42 + NUM_TASKS - 1);
+                });
+
+                done();
+            })
+            .done();
+
+        taskPromise
+            .fail(function() {
+                throw new Error('task promise from SlaveManager.dequeue() failed');
+            });
+    });
+
+    it('should fail when invalid task IDs are passed to dequeue',
+       function(done) {
+        var manager = new SlaveManager(9006);
+        var promise = manager.dequeue([ 'testTaskId' ]);
+
+        promise.then(function() {
+            throw new Error('dequeue() promise should fail when called with '
+                            + 'invalid IDs');
+        });
+
+        promise.fail(function(error) {
+            done();
+        });
     });
 });
