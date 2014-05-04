@@ -8,9 +8,9 @@ angular.module('vcApp')
                     alert("Update your browser");
             }else {
                 var socket = io.connect('http://localhost:44444');
-                socket.on('new-task', function (data) {
+                socket.on('task_request', function (data) {
                     console.log(JSON.stringify(data));
-                    socket.emit('result', Slave.execute_task(data));
+                    socket.emit('task_reply', Slave.execute_task(data));
                 });
             }
         });
