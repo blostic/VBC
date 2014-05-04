@@ -58,7 +58,7 @@ describe('SlaveManager', function() {
             msg.code.should.eql(task.code);
             msg.data.should.eql(task.data);
 
-            socket.emit('task_reply', {
+            this.emit('task_reply', {
                 task_id: msg.task_id,
                 result: 42
             });
@@ -117,7 +117,7 @@ describe('SlaveManager', function() {
                 msg.code.should.eql(tasks[msg.task_id].code);
                 msg.data.should.eql(tasks[msg.task_id].data);
 
-                socket.emit('task_reply', {
+                this.emit('task_reply', {
                     task_id: msg.task_id,
                     result: 100 + msg.task_id
                 });
@@ -175,7 +175,7 @@ describe('SlaveManager', function() {
             msg.code.should.eql(tasks[msg.task_id].code);
             msg.data.should.eql(tasks[msg.task_id].data);
 
-            socket.emit('task_reply', {
+            this.emit('task_reply', {
                 task_id: msg.task_id,
                 result: 42 + msg.task_id
             });
@@ -219,5 +219,58 @@ describe('SlaveManager', function() {
         promise.fail(function(error) {
             done();
         });
+    });
+
+    it('should try to recover when a busy slave disconnects', function(done) {
+        var manager = new SlaveManager(9007, true);
+        var socket = io.connect('http://localhost:9007',
+                                { 'force new connection': 1 });
+        socket.on('task_request', function(msg) {
+            this.disconnect();
+        });
+
+        var task = {
+            id: 'testTaskId',
+            status: 'new',
+            data: 'testData',
+            partial_result: null,
+            code: 'testCode',
+            job: 'testJob'
+        };
+
+        var pkg = [ task ];
+        var taskPromise = manager.enqueue(pkg);
+
+        var newSocket = io.connect('http://localhost:9007',
+                                   { 'force new connection': 1 });
+
+        newSocket.on('task_request', function(msg) {
+            msg.task_id.should.eql(task.id),
+            msg.code.should.eql(task.code);
+            msg.data.should.eql(task.data);
+
+            this.emit('task_reply', {
+                task_id: msg.task_id,
+                result: 42
+            });
+        });
+
+        var progressNotified = false;
+        taskPromise
+            .progress(function(completedTask) {
+                task.should.eql(completedTask);
+                progressNotified = true;
+            })
+            .then(function(result) {
+                progressNotified.should.be.true;
+                result.should.eql(pkg);
+                done();
+            })
+            .done();
+
+        taskPromise
+            .fail(function() {
+                throw new Error('task promise from SlaveManager failed');
+            });
     });
 });
