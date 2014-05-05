@@ -20,8 +20,8 @@ angular.module('vcApp')
                     job_id: job.id
                 },
                 function(_job) {
-                   job.progress = "TO DO";
                    job.status = _job.status;
+                   job.result = _job.result;
                 },
                 function(err) {
                     console.log(err);

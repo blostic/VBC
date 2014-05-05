@@ -1,11 +1,11 @@
 h1 Your jobs
 .panel-group
 
-    div.panel.panel-info(ng-repeat='job in jobs', class='{{job}}')
+    div.panel(ng-repeat='job in jobs', ng-class='{"panel-success": job.status == "completed", "panel-warning": job.status == "executing", "panel-info": job.status == "new"}', class='{{job}}')
         div.panel-heading
             h4.panel-title
                 a(data-toggle='collapse', data-target='#{{job.id}}')
-                    | {{job.status}} {{job.type}}
+                    | {{job.type}}
         .panel-collapse.collapse(id='{{job.id}}')
             div.panel-body.container
                 .row
@@ -19,13 +19,13 @@ h1 Your jobs
                 .row(ng-show='job.status == "completed"')
                     p.col-md-3
                         strong Result:
-                        p.col-md-9 {{job.result}}
+                    div.col-md-9 {{job.result}}
                 .row
                 .row
                     p.col-md-3
                         strong Arguments range:
                     p.col-md-9  {{job.data.start}} - {{job.data.stop}}
-                .row(ng-show='job.status != "new"')
+                .row(ng-show='job.status == "executing"')
                     div.col-md-3(style='padding-top: 7px')
                         strong Progress:
                     .col-sm-4.col-md-4
