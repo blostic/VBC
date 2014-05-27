@@ -9,6 +9,7 @@
                     div.panel-heading.collapsed(data-toggle='collapse', data-target='#{{job.id}}')
                         h4.panel-title
                             | [{{job.creation_date | date:'medium'}}] {{job.type}}
+                        progressbar(value='job.progress * 100', style='margin-top:10px', ng-show='job.status == "executing" || job.status == "completed"')
                     .panel-collapse.collapse(id='{{job.id}}')
                         div.panel-body.container
                             .row
@@ -33,7 +34,6 @@
                                     strong Progress:
                                 .col-sm-4.col-md-4
                                     button.btn.btn-primary(type='submit', ng-click='updateProgress(job)') {{job.progress}}
-
 .panel.panel-primary
     .panel-heading
         h4 Add new job
