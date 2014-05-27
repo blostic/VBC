@@ -1,13 +1,18 @@
 'use strict';
 
 angular.module('vcApp')
-    .controller('JobsCtrl', function($scope, Auth, AddJob) {
+    .controller('JobsCtrl', function($scope, $interval, Auth, AddJob) {
         $scope.user = Auth.user;
         $scope.updateJobs = function (){
             Auth.showJobs(function(res) {
                 var jobs = res.jobs;
                 for (var job in jobs) {
-                    jobs[job].progress = "Check";
+                    $interval((function (job) {
+                        console.log(job);
+                        return function () {
+                            $scope.updateProgress(job);
+                        };
+                    })(jobs[job]), 1000);
                 }
                 $scope.jobs = jobs;
 
@@ -22,6 +27,8 @@ angular.module('vcApp')
                 function(_job) {
                    job.status = _job.status;
                    job.result = _job.result;
+                   job.progress = _job.progress;
+                   console.log(_job);
                 },
                 function(err) {
                     console.log(err);

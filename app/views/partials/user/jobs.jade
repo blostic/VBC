@@ -6,6 +6,7 @@ h1 Your jobs
             h4.panel-title
                 a(data-toggle='collapse', data-target='#{{job.id}}')
                     | {{job.type}}
+            progressbar(value='job.progress * 100', style='margin-top:10px', ng-show='job.status == "executing" || job.status == "completed"')
         .panel-collapse.collapse(id='{{job.id}}')
             div.panel-body.container
                 .row
@@ -25,11 +26,6 @@ h1 Your jobs
                     p.col-md-3
                         strong Arguments range:
                     p.col-md-9  {{job.data.start}} - {{job.data.stop}}
-                .row(ng-show='job.status == "executing"')
-                    div.col-md-3(style='padding-top: 7px')
-                        strong Progress:
-                    .col-sm-4.col-md-4
-                        button.btn.btn-primary(type='submit', ng-click='updateProgress(job)') {{job.progress}}
                 .row(ng-show='job.status == "new"')
                     div.col-md-3(style='padding-top: 7px')
                         strong Run:
