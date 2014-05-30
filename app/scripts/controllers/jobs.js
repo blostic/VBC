@@ -20,8 +20,8 @@ angular.module('vcApp')
                     job_id: job.id
                 },
                 function(_job) {
-                   job.status = _job.status;
-                   job.result = _job.result;
+                    job.status = _job.status;
+                    job.result = _job.result;
                 },
                 function(err) {
                     console.log(err);
@@ -34,11 +34,11 @@ angular.module('vcApp')
                     job_id: job.id,
                     count: job.tasksCount
                 },
-                function(res) {
+                function() {
                     AddJob.startJob({
                             job_id: job.id
                         },
-                        function(res) {
+                        function() {
                             $scope.updateJobs();
                         },
                         function(err) {

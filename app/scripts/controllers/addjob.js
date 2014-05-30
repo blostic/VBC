@@ -7,7 +7,7 @@ angular.module('vcApp')
         $scope.start = 0;
         $scope.stop = 10;
 
-        $scope.addJob = function(form) {
+        $scope.addJob = function() {
             $scope.data = {
                 start: $scope.start,
                 stop: $scope.stop
