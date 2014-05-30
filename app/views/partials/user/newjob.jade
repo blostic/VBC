@@ -18,7 +18,10 @@ form.form-horizontal(name='form', role='form', ng-submit='addJob(form)')
                     label.col-sm-2.control-label Ending:
                     .col-sm-2
                         input.form-control(type='number', name='stop', ng-model='stop', required)
-
+                .form-group
+                    label.col-sm-2.control-label Number of tasks:
+                    .col-sm-2
+                        input.form-control(type='number', name='count', ng-model='count', required)
 
                 button.btn.btn-lg.btn-primary(type='submit') Add job
                 .div
