@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('vcApp')
-    .factory('AddJob', function($http, $cookieStore) {
+    .factory('AddJob', function($http/*, $cookieStore*/) {
         return {
             addJob: function(body, success, error) {
                 $http.post('/api/addJob', body).success(function(res) {
