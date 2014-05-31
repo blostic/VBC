@@ -1,8 +1,9 @@
 'use strict';
 
 angular.module('vcApp')
-    .controller('JobsCtrl', function($scope, Auth, AddJob) {
+    .controller('JobsCtrl', function($scope, Auth, AddJob, $timeout) {
         $scope.user = Auth.user;
+
         $scope.updateJobs = function (){
             Auth.showJobs(function(res) {
                 var jobs = res.jobs;
@@ -15,6 +16,7 @@ angular.module('vcApp')
                 $scope.errors = { message: err };
             });
         };
+
         $scope.updateProgress = function (job){
             AddJob.getJobInfo({
                     job_id: job.id
@@ -28,29 +30,13 @@ angular.module('vcApp')
                     job.errors = { message: err };
                 });
         };
-        $scope.startJob = function(job) {
-            console.log(job.tasksCount);
-            AddJob.splitJob({
-                    job_id: job.id,
-                    count: job.tasksCount
-                },
-                function() {
-                    AddJob.startJob({
-                            job_id: job.id
-                        },
-                        function() {
-                            $scope.updateJobs();
-                        },
-                        function(err) {
-                            console.log(err);
-                            job.errors = { message: err };
-                        });
-                },
-                function(err) {
-                    console.log(err);
-                    job.errors = { message: err };
-                });
-        };
+
+        setInterval(
+            function(){
+                for (var job in $scope.jobs) {
+                    $scope.updateProgress($scope.jobs[job]);
+               }
+            }, 2000);
 
         $scope.updateJobs();
     });
