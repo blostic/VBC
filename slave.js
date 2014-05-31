@@ -1,3 +1,8 @@
+// README  !!!!!!!!!!!!!!!!!!!!
+// Essence of slave is at the bottom of document
+
+
+
 /*! Socket.IO.js build:0.9.16, development. Copyright(c) 2011 LearnBoost <dev@learnboost.com> MIT Licensed */
 
 var io = ('undefined' === typeof module ? {} : module.exports);
@@ -3871,3 +3876,30 @@ if (typeof define === "function" && define.amd) {
   define([], function () { return io; });
 }
 })();
+
+
+
+var slave = function(){
+  if(!("WebSocket" in window)){
+        alert("Update your browser. You need WebSocket");
+  }else {
+      var blob = new Blob([
+        function(){
+          var socket = io.connect('http://localhost:9001');
+        socket.on('task_request', 
+          function (data) {
+                    var result = function(task) {
+                        var func = eval('(' + task.code + ')');
+                        var data = eval(task.data);
+                        var res = {task_id : task.task_id };
+                        res.result = func(data);
+                        return res;
+                    }(data);
+                  socket.emit('task_reply', result);
+            })
+        }()
+      ],{ type: "text/javascript" });
+      // Note: window.webkitURL.createObjectURL() in Chrome 10+.
+      var worker = new Worker(window.URL.createObjectURL(blob));
+    }
+  }();

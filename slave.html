@@ -1,34 +1,7 @@
 <!DOCTYPE html>
 <html>
 <body>
-
-<p>A script on this page starts this clock:</p>
-
-<script src="socket.io.js"></script>
-<script> 
-	if(!("WebSocket" in window)){
-        alert("Update your browser. You need WebSocket");
-	}else {
-   		var blob = new Blob([
-   			function(){
-   				var socket = io.connect('http://localhost:9001');
-				socket.on('task_request', 
-					function (data) {
-			            	var result = function(task) {
-			                	var func = eval('(' + task.code + ')');
-			                	var data = eval(task.data);
-			                	var res = {task_id : task.task_id };
-			                	res.result = func(data);
-			                	return res;
-		            		}(data);
-		            	socket.emit('task_reply', result);
-		    		})
-	   		}()
-    	],{ type: "text/javascript" });
-    	// Note: window.webkitURL.createObjectURL() in Chrome 10+.
-    	var worker = new Worker(window.URL.createObjectURL(blob));
-    }
-</script>
-
+<p>You are a slave</p>
+<script src="slave.js"></script>
 </body>
 </html>
