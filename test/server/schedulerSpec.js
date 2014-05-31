@@ -68,7 +68,51 @@ describe('Scheduler', function () {
                 jobTypes : job_types,
                 slaveManager : slaveManager
             });
+            scheduler.init();
             done();
+        });
+    });
+
+    describe('#init', function () {
+        it('should attempt to resume executing jobs', function (done) {
+            var enqueueCalled = 0,
+                scheduler = new Scheduler({
+                    jobTypes : job_types,
+                    slaveManager : slaveManager
+                });
+
+            slaveManager.enqueue = function (tasks) {
+                tasks.length.should.equal(1);
+                tasks[0]._id.should.eql(task1._id);
+                enqueueCalled++;
+                return {};
+            };
+
+            scheduler.trackProgress = function () {};
+
+            var job = new Job({
+                    status : "executing",
+                    data   : { a : 0, b : 10 },
+                    type : "testowy"
+                }),
+                task1 = new Task({
+                    status : "executing",
+                    job    : job.id
+                }),
+                task2 = new Task({
+                    status : "completed",
+                    job    : job.id
+                });
+
+            Q.all([ job.saveQ(), task1.saveQ(), task2.saveQ() ])
+            .then(function () {
+                return scheduler.init();
+            })
+            .then(function () {
+                enqueueCalled.should.equal(1);
+                done();
+            })
+            .done();
         });
     });
 

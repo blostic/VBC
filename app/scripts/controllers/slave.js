@@ -5,9 +5,9 @@ angular.module('vcApp')
         $scope.test = "test text";
         $(document).ready(function() {
             if(!("WebSocket" in window)){
-                    alert("Update your browser. You need WebSocket");
-            }else {
-                var worker = new Worker('/execution_thread.js');
+                alert("Update your browser. You need WebSocket");
+            } else {
+                new Worker('/execution_thread.js');
             }
         });
     });

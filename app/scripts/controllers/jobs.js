@@ -22,8 +22,8 @@ angular.module('vcApp')
                     job_id: job.id
                 },
                 function(_job) {
-                   job.status = _job.status;
-                   job.result = _job.result;
+                    job.status = _job.status;
+                    job.result = _job.result;
                 },
                 function(err) {
                     console.log(err);
@@ -39,5 +39,4 @@ angular.module('vcApp')
             }, 2000);
 
         $scope.updateJobs();
-
     });
