@@ -8,7 +8,7 @@ var SlaveManager = require('../../lib/slave-manager'),
 
 describe('SlaveManager', function() {
     it('should listen for incoming slave connections', function(done) {
-        var manager = new SlaveManager(9001);
+        var manager = new SlaveManager({ listenPort: 9001 });
         var socket = io.connect('http://localhost:9001');
         var deferred = Q.defer();
 
@@ -41,7 +41,7 @@ describe('SlaveManager', function() {
     });
 
     it('should pass tasks to the slave', function(done) {
-        var manager = new SlaveManager(9003);
+        var manager = new SlaveManager({ listenPort: 9003 });
         var socket = io.connect('http://localhost:9003');
 
         var task = {
@@ -90,7 +90,7 @@ describe('SlaveManager', function() {
         var NUM_SLAVES = 3;
         var NUM_TASKS = 9;
 
-        var manager = new SlaveManager(9004);
+        var manager = new SlaveManager({ listenPort: 9004 });
         var sockets = [];
 
         for (var i = 0; i < NUM_SLAVES; ++i) {
@@ -155,7 +155,7 @@ describe('SlaveManager', function() {
        + 'completed', function(done) {
         var NUM_TASKS = 9;
 
-        var manager = new SlaveManager(9005);
+        var manager = new SlaveManager({ listenPort: 9005 });
         var socket = io.connect('http://localhost:9005');
 
         var tasks = [];
@@ -208,7 +208,7 @@ describe('SlaveManager', function() {
 
     it('should fail when invalid task IDs are passed to dequeue',
        function(done) {
-        var manager = new SlaveManager(9006);
+        var manager = new SlaveManager({ listenPort: 9006 });
         var promise = manager.dequeue([ 'testTaskId' ]);
 
         promise.then(function() {
@@ -222,7 +222,7 @@ describe('SlaveManager', function() {
     });
 
     it('should try to recover when a busy slave disconnects', function(done) {
-        var manager = new SlaveManager(9007);
+        var manager = new SlaveManager({ listenPort: 9007 });
         var socket = io.connect('http://localhost:9007',
                                 { 'force new connection': 1 });
         socket.on('task_request', function(msg) {
