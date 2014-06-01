@@ -1,47 +1,82 @@
-h1 Your jobs
-.panel-group
+.panel.panel-primary
+    .panel-heading
+        h4 Your jobs
+    .panel-body
+            div(ng-show='isEmpty(jobs)')
+                p Please add job first!
+            .panel-group
+                div.panel(ng-repeat='job in jobs', ng-class='{"panel-success": job.status == "completed", "panel-warning": job.status == "executing", "panel-info": job.status == "new", "panel-default": job.status == "prepared"}', class='{{job.id}}')
+                    div.panel-heading.collapsed(data-toggle='collapse', data-target='#{{job.id}}')
+                        h4.panel-title
+                            | [{{job.creation_date | date:'medium'}}] {{job.type}}
+                    .panel-collapse.collapse(id='{{job.id}}')
+                        div.panel-body.container
+                            .row
+                                p.col-md-3
+                                    strong Creation Date:
+                                p.col-md-9 {{job.creation_date | date:'medium'}}
+                            .row
+                                p.col-md-3
+                                    strong Status:
+                                    p.col-md-9 {{job.status}}
+                            .row(ng-show='job.status == "completed"')
+                                p.col-md-3
+                                    strong Result:
+                                div.col-md-9 {{job.result}}
+                            .row
+                            .row
+                                p.col-md-3
+                                    strong Arguments range:
+                                p.col-md-9  {{job.data.start}} - {{job.data.stop}}
+                            .row(ng-show='job.status == "executing"')
+                                div.col-md-3(style='padding-top: 7px')
+                                    strong Progress:
+                                .col-sm-4.col-md-4
+                                    button.btn.btn-primary(type='submit', ng-click='updateProgress(job)') {{job.progress}}
+                            .row(ng-show='job.status == "new"')
+                                div.col-md-3(style='padding-top: 7px')
+                                    strong Run:
+                                .col-sm-4.col-md-3
+                                    form(name='form', role='form', ng-submit='startJob(job)')
+                                        .input-group
+                                            input.form-control(type='number',name='tasksCount', ng-model='job.tasksCount', placeholder='Number of tasks')
+                                            span.input-group-btn
+                                                button.btn.btn-default(type='submit') Start
+                                        p.label.label-danger(ng-show='job.errors')
+                                            | {{job.errors.message}}
 
-    div.panel(ng-repeat='job in jobs', ng-class='{"panel-success": job.status == "completed", "panel-warning": job.status == "executing", "panel-info": job.status == "new"}', class='{{job}}')
-        div.panel-heading
-            h4.panel-title
-                a(data-toggle='collapse', data-target='#{{job.id}}')
-                    | {{job.type}}
-        .panel-collapse.collapse(id='{{job.id}}')
-            div.panel-body.container
-                .row
-                    p.col-md-3
-                        strong Creation Date:
-                    p.col-md-9 {{job.creation_date | date:'medium'}}
-                .row
-                    p.col-md-3
-                        strong Status:
-                        p.col-md-9 {{job.status}}
-                .row(ng-show='job.status == "completed"')
-                    p.col-md-3
-                        strong Result:
-                    div.col-md-9 {{job.result}}
-                .row
-                .row
-                    p.col-md-3
-                        strong Arguments range:
-                    p.col-md-9  {{job.data.start}} - {{job.data.stop}}
-                .row(ng-show='job.status == "executing"')
-                    div.col-md-3(style='padding-top: 7px')
-                        strong Progress:
-                    .col-sm-4.col-md-4
-                        button.btn.btn-primary(type='submit', ng-click='updateProgress(job)') {{job.progress}}
-                .row(ng-show='job.status == "new"')
-                    div.col-md-3(style='padding-top: 7px')
-                        strong Run:
-                    .col-sm-4.col-md-3
-                        form(name='form', role='form', ng-submit='startJob(job)')
-                            .input-group
-                                input.form-control(type='number',name='tasksCount', ng-model='job.tasksCount', placeholder='Number of tasks')
-                                span.input-group-btn
-                                    button.btn.btn-default(type='submit') Start
-                            p.label.label-danger(ng-show='job.errors')
-                                | {{job.errors.message}}
-
+.panel.panel-primary
+    .panel-heading
+        h4 Add new job
+    .panel-body
+        form.form-horizontal(name='form', role='form', ng-submit='addJob(form)')
+            .form-group
+                ol
+                    li
+                        h4 Select function
+                        select(ng-model='selectedFunction')
+                            option(ng-repeat='function in functions') {{function}}
+                        p(ng-show='selectedFunction') Description of selected function
+                    li(ng-show='selectedFunction')
+                        h4 Enter arguments
+                        p Interval:
+                        .form-group
+                            label.col-sm-2.control-label Beginning:
+                            .col-sm-2
+                                input.form-control(type='number', name='start', ng-model='start', required)
+                        .form-group
+                            label.col-sm-2.control-label Ending:
+                            .col-sm-2
+                                input.form-control(type='number', name='stop', ng-model='stop', required)
+                        .form-group
+                            label.col-sm-2.control-label Number of tasks:
+                            .col-sm-2
+                                input.form-control(type='number', name='count', ng-model='count', required)
+                        button.btn.btn-lg.btn-primary(type='submit') Add job
+                        .div
+                        p.label.label-danger(ng-show='errors')
+                            | {{errors.message}}
+                        span.clearfix
 
 
 

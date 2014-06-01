@@ -20,14 +20,14 @@ describe('UI: Add Job page', function() {
     }
 
     it('should redirect to login page when user is not logged in', function() {
-        browser().navigateTo('/newjob/');
+        browser().navigateTo('/jobs/');
 
         expect(browser().location().url()).toBe('/login/');
     });
 
     it('should display input form on /newjob/', function() {
         login();
-        browser().navigateTo('/newjob/');
+        browser().navigateTo('/jobs/');
 
         select("selectedFunction").option("sum");
 
@@ -39,7 +39,7 @@ describe('UI: Add Job page', function() {
 
     xit('should display error message when user attepmts to add a job with invalid input', function() {
         login();
-        browser().navigateTo('/newjob/');
+        browser().navigateTo('/jobs/');
         select("selectedFunction").option("sum");
         input('beginning').enter('');
         element('button[type=submit]', 'submit button').click();
@@ -51,7 +51,7 @@ describe('UI: Add Job page', function() {
 
     it('should redirect to /jobs/ when the job is added', function() {
         login();
-        browser().navigateTo('/newjob/');
+        browser().navigateTo('/jobs/');
         select("selectedFunction").option("sum");
         input('start').enter(1);
         element('button[type=submit]', 'submit button').click();
