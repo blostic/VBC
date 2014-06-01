@@ -22,8 +22,8 @@ angular.module('vcApp')
                     count: $scope.count
                 },
                 function(res) {
-                    $scope.startJob(res.job, $scope.count);
                     $scope.updateJobs();
+                    $scope.startJob(res.job, $scope.count);
                     $location.path('/jobs');
                     $scope.selectedFunction = undefined;
                 },
@@ -40,15 +40,7 @@ angular.module('vcApp')
                     count: count
                 },
                 function(res) {
-                    AddJob.startJob({
-                            job_id: job_id
-                        },
-                        function(res) {
-                        },
-                        function(err) {
-                            console.log(err);
-                            job.errors = { message: err };
-                        });
+                    console.log(res);
                 },
                 function(err) {
                     console.log(err);

@@ -33,17 +33,6 @@
                                     strong Progress:
                                 .col-sm-4.col-md-4
                                     button.btn.btn-primary(type='submit', ng-click='updateProgress(job)') {{job.progress}}
-                            .row(ng-show='job.status == "new"')
-                                div.col-md-3(style='padding-top: 7px')
-                                    strong Run:
-                                .col-sm-4.col-md-3
-                                    form(name='form', role='form', ng-submit='startJob(job)')
-                                        .input-group
-                                            input.form-control(type='number',name='tasksCount', ng-model='job.tasksCount', placeholder='Number of tasks')
-                                            span.input-group-btn
-                                                button.btn.btn-default(type='submit') Start
-                                        p.label.label-danger(ng-show='job.errors')
-                                            | {{job.errors.message}}
 
 .panel.panel-primary
     .panel-heading
