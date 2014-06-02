@@ -326,7 +326,7 @@ describe('Scheduler', function () {
                 task1.status = "completed";
                 task1.partial_result = 42;
 
-                deferred.notify([task1]);
+                deferred.notify(task1);
 
                 _.delay(function () {
                     Task.findByIdQ(task1.id)
